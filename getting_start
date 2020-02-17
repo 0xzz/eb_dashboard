@@ -1,0 +1,72 @@
+Getting start for development
+1. create a new conda environment by only specifying the name and python=3.6
+2. activate the environment
+3. pip install -r requirements.txt
+4. python app.py
+5. In browser, type localhost:8050 to use the tool
+6. If pytesseract reports "cannot find tesseract", you will have to install tesseract to your computer manually
+	In linux system, type the following commands in terminal:
+		sudo apt-get update
+		sudo apt-get install tesseract-ocr
+		sudo apt-get install libtesseract-dev
+
+
+
+Deploy to Heroku
+	Preparing for deployment
+	1. make sure app.py, requirements.txt are in the same folder
+	2. make sure you have server=app.server in your app.py code
+	3. css, favicon files should be put under /assets/ folder
+	4. make sure gunicorn is included in your requirements.txt, otherwise run "pip install gunicorn" and then do "pip freeze >requirement.txt"
+	5. check https://dash.plot.ly/deployment for guidance
+	6. create a file named "Procfile" and put "web: gunicorn app:server"
+	7. create a file named Aptfile and put the following two lines inside
+		tesseract-ocr
+		tesseract-ocr-eng
+
+	Deployment steps:
+
+	If this is a new deployment to a new app, first create the app and then config multi-buildpacks and environment variables. If this is to update an existing deployment, you should skip step 1,2,3
+
+	1. [New deployment only] First create the app. In cmd, 
+		$ heroku create my-dash-app # change my-dash-app to a unique name
+	2. [New deployment only] [Critical!!] config buildpacks. The app requires python and tesseract. So it is required to do multiple buildpacks
+		# heroku buildpacks:set heroku/python
+		# heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-apt
+
+		Note that this can also be done in the web gui. To do so, in the dashboard.heroku.com/apps/your-app-name, in setting, click "Add buildpack" and type the "https://github.com/heroku/heroku-buildpack-apt" into the Buildpack URL
+
+	3. [New deployment only] Set heroku config variable
+		$ heroku config:set TESSDATA_PREFIX=/app/.apt/usr/share/tesseract-ocr/4.00/tessdata
+
+	   Note that this can also be done in the web gui. To do so, in the dashboard.heroku.com/apps/your-app-name, in setting, click "Reveal Config Vars" and add key "TESSDATA_PREFIX" and value "/app/.apt/usr/share/tesseract-ocr/4.00/tessdata".
+
+	   Also note that this is tested in heroku-18. In other environment, the path might be subject to change.
+
+	   for more information, please refer to
+		https://github.com/kevin1061517/python-deploy-Tesseract-OCR-to-Heroku
+	   and
+		https://stackoverflow.com/questions/53363547/how-to-deploy-pytesseract-to-heroku
+
+	4. [Updating existing app only] make sure you are in the correct app
+		$ heroku git:remote -a your-app-name
+
+	5. make sure the Aptfile file is in the folder and contain the correct information
+	   make sure the requirement.txt file is in the folder
+	   make sure the Procfile file is in the folder and contain the correct information
+
+
+	6. check what is changed
+		$ git status
+
+	7. add file and commit
+		$ git add .
+		$ git commit -m "your message"
+
+	8. push and build
+		$ git push heroku master
+
+
+	   
+
+		
