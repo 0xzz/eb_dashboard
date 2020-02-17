@@ -7,6 +7,4 @@ def load_data():
     #cols = ['FY','140Rec','140Approve','485Rec','485Approve','485Pending']
     #df = df[cols]
 
-    print(df)
-
     return df
