@@ -5,7 +5,7 @@ import dash_html_components as html
 
 import uuid
 
-from helpers import load_data
+from helpers import load_140_485_by_FY, load_vb_dates
 
 page_content_frame = html.Div(id='page-content-frame')
 
@@ -15,12 +15,12 @@ def app_layout(app_name):
     define app layout
     ''' 
 
-    df = load_data()
+    df_140_485 = load_140_485_by_FY()
 
     tb_layout = dash_table.DataTable(
         id = 'table',
-        columns=[{"name": i, "id": i} for i in df.columns],
-        data=df.to_dict('records'),
+        columns=[{"name": i, "id": i} for i in df_140_485.columns],
+        data=df_140_485.to_dict('records'),
         sort_action="native",
         style_cell={
             'minWidth': '80px', 'width': '80px', 'maxWidth': '80px',
@@ -29,18 +29,42 @@ def app_layout(app_name):
         },
     )
 
-    fig_data = [{'x': df['FY'], 'y': df[col], 'name':col} for col in df.columns if col!='FY']
-    #['140Rec','140Approve','485Rec','485Approve','485Pending']]
-    
-    fig_layout = dcc.Graph(
-        id='example-graph',
+    fig_140_485_layout = dcc.Graph(
+        #id='example-graph',
         figure={
-            'data': fig_data,
+            'data': [{'x': df_140_485['FY'], 'y': df_140_485[col], 'name':col} \
+                        for col in df_140_485.columns if col!='FY'],
             'layout': {
-                'title': 'Dash Data Visualization'
+                'title': '140/485 data Visualization'
             }
         }
     )
+
+
+    eb1_dates, eb2_dates, eb3_dates, _ = load_vb_dates()
+
+    fig_vb_dates_layout = html.Div([
+        html.Div(
+            dcc.Graph(
+                #id='example-graph',
+                figure={
+                    'data': [{'x': df['date'], 'y': df[col], 'name':col, 'hoverinfo':"x+y"} for col in df.columns if col!='date'],
+                    'layout': {
+                        'title': f'Eb-{i+1} Final Action Dates',
+                        'margin':{'l':35, 'r':25,'b':30},
+                        'legend':{'x':.05, 'y':.95,
+                                  'bgcolor':"#DDDDDD",
+                                  'bordercolor':'gray',
+                                  'borderwidth':2}
+                    }
+                },
+                config={
+                    "displaylogo": False,
+                    'modeBarButtonsToRemove': ['lasso2d']
+                },
+        ), className="col-md-4", style={'padding':'0.5rem','border-radius':'5px'})
+        for i, df in enumerate([eb1_dates, eb2_dates, eb3_dates])],
+        className = 'row')
 
     page_titles = html.Div([
         html.H4(f'{app_name}', className = 'my-0 mr-1 font-weight-normal'),
@@ -367,8 +391,9 @@ def app_layout(app_name):
               page_titles,
               tutorial_elements,
               hidden_elements,
+              fig_vb_dates_layout,
               tb_layout,
-              fig_layout,
+              fig_140_485_layout,
               top_function_row,
               #log_image,
               html.Div([

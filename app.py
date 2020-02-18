@@ -11,9 +11,10 @@ from resources import external_scripts, external_stylesheets, meta_tags
 app = dash.Dash('EB Information',
 		external_scripts = external_scripts,
                   #external_stylesheets = external_stylesheets,
-                meta_tags = meta_tags
+                meta_tags = meta_tags,
                )
 app.title = 'EB Information'
+
 
 server = app.server
 
