@@ -2,23 +2,26 @@ import dash_table
 import dash_daq as daq
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 
 import uuid
 
-from helpers import load_140_485_by_FY, load_vb_dates
+from components.top_navbar import get_navbar
+from components.vb_dates import get_final_action_dates_figures
 
-page_content_frame = html.Div(id='page-content-frame')
+from helpers import load_140_485_by_FY
 
-
-def app_layout(app_name):
+def get_app_layout(app_name):
     '''
     define app layout
     ''' 
 
+    navbar = get_navbar(app_name)
+
     df_140_485 = load_140_485_by_FY()
 
     tb_layout = dash_table.DataTable(
-        id = 'table',
+        # id = 'table',
         columns=[{"name": i, "id": i} for i in df_140_485.columns],
         data=df_140_485.to_dict('records'),
         sort_action="native",
@@ -40,31 +43,8 @@ def app_layout(app_name):
         }
     )
 
+    fig_vb_dates_layout = get_final_action_dates_figures()
 
-    eb1_dates, eb2_dates, eb3_dates, _ = load_vb_dates()
-
-    fig_vb_dates_layout = html.Div([
-        html.Div(
-            dcc.Graph(
-                #id='example-graph',
-                figure={
-                    'data': [{'x': df['date'], 'y': df[col], 'name':col, 'hoverinfo':"x+y"} for col in df.columns if col!='date'],
-                    'layout': {
-                        'title': f'Eb-{i+1} Final Action Dates',
-                        'margin':{'l':35, 'r':25,'b':30},
-                        'legend':{'x':.05, 'y':.95,
-                                  'bgcolor':"#DDDDDD",
-                                  'bordercolor':'gray',
-                                  'borderwidth':2}
-                    }
-                },
-                config={
-                    "displaylogo": False,
-                    'modeBarButtonsToRemove': ['lasso2d']
-                },
-        ), className="col-md-4", style={'padding':'0.5rem','border-radius':'5px'})
-        for i, df in enumerate([eb1_dates, eb2_dates, eb3_dates])],
-        className = 'row')
 
     page_titles = html.Div([
         html.H4(f'{app_name}', className = 'my-0 mr-1 font-weight-normal'),
@@ -94,46 +74,6 @@ def app_layout(app_name):
                    n_clicks_timestamp = -1),
                ], style={'display':'none'})
 
-
-    top_function_row =  html.Div([
-                        html.Div(
-                            dcc.Upload(id='upload-log-image',
-                                children=html.Div([
-                                    'Drag and Drop or ', html.A('Select Image Files', style={'color':'#0088FF', 'text-decoration': 'underline'})
-                                ]),
-                                style={
-                                    'lineHeight': '40px',
-                                    'borderWidth': '1px',
-                                    'borderStyle': 'dashed',
-                                    'borderRadius': '5px',
-                                    'textAlign': 'center',
-                                    #'margin': '10px'
-                                },
-                                multiple=False
-                            ), 
-                            style={'display': 'inline-block', 'padding': '5px'},
-                            className="col-sm-4"
-                        ),
-                    ], className="row")
-
-    log_image_html = html.Div(id='graph-holder', children=[
-        html.Img(id='graph-div', src=''),
-        ], style={'overflow': 'auto', 'max-width': '45vw', 'max-height': '85vh', 'padding': '5px', 'display':'none'}, className="row-sm-4"
-    )
-
-    crop_image_html = html.Div(id='crop-graph-holder', children=[
-        html.Img(id='crop-graph-div', src=''),
-        ], style={'overflow': 'auto', 'max-width': '25vw', 'max-height': '85vh', 'padding': '5px', 'display':'none'}, className="row-sm-3"
-    )
-
-
-    session_summary_table = html.Div([
-                            dash_table.DataTable(id='summary-table',
-                                columns=[{'name': 'name', 'id': 'name'}, {'name': 'type', 'id': 'type'}, {'name': 'depth range', 'id': 'depth range'}, {'name': 'value-range', 'id': 'value-range'}, {'name': 'unit', 'id': 'unit'}, {'name': 'log scale', 'id': 'log scale'}],
-                                row_deletable = True,
-                            ),
-                            html.Div(id='summary-table-msg')
-                        ])
 
     sidebar_functions =  html.Div(id='sidebar', children=[
                         html.Div([
@@ -181,7 +121,6 @@ def app_layout(app_name):
                         html.Div([
                             html.H6('Progress')
                         ], className = 'sidebar-header'),
-                        session_summary_table,
                         html.Div([
                             html.H6('AutoWellLog ToolBox', className='p-1 mr-auto'),
                             html.Div([
@@ -387,21 +326,14 @@ def app_layout(app_name):
 
 
     return html.Div([
-              #html.Div(id='qri-auth-frame'),
-              page_titles,
+              navbar,
               tutorial_elements,
               hidden_elements,
+              html.H4('Final Action Dates History',id='FAD'),
               fig_vb_dates_layout,
-              tb_layout,
-              fig_140_485_layout,
-              top_function_row,
-              #log_image,
+              html.H4('140/485 Anually numbers', id='data_140_485'),
               html.Div([
-                log_image_html,
-                crop_image_html
-              ], className="row"),
-              sidebar_functions,
-              #sidebar,
-              #session_summary_table,
-              #,
+                  html.Div([tb_layout],className = "col-lg-5", style={'margin':'1rem'}),
+                  html.Div([fig_140_485_layout],className = "col-lg-5", style={'margin':'1rem'})
+              ], className = "row"),
             ], className="container-fluid")

@@ -17,8 +17,6 @@ import numpy as np
 import os
 import glob
 
-from layouts import app_layout
-
 
 with open("tutorial_description.md", "r") as file:
     tutorial_description_md = file.read()
@@ -26,11 +24,6 @@ with open("tutorial_description.md", "r") as file:
 into_description_md = ''
 
 def set_app_callbacks(app, app_name):
-
-    @app.callback(Output('page-content-frame', 'children'),
-                [Input('page-content-frame', 'id')])
-    def dynamic_layout(_):
-        return app_layout(app_name)
 
     # Callback function for the learn-more button
     @app.callback(
