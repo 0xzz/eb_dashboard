@@ -2,6 +2,7 @@ from helpers import load_140_485_by_FY
 import dash_table
 import dash_html_components as html
 import dash_core_components as dcc
+from .default_config import default_config
 
 def get_overall_140_485_view():
 
@@ -27,7 +28,8 @@ def get_overall_140_485_view():
             'layout': {
                 'title': '140/485 data Visualization'
             }
-        }
+        },
+        config=default_config,
     )
 
     return html.Div([

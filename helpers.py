@@ -18,3 +18,14 @@ def load_vb_dates():
 
     df = pd.merge(pd.merge(df_eb1, df_eb2, on='date'), df_eb3, on='date')
     return df_eb1, df_eb2, df_eb3, df
+
+def load_140_stats():
+
+    df = pd.read_csv('./data/historical_140_cleaned.csv')
+
+    return df
+
+def load_gc_stats():
+    df = pd.read_csv('./data/visa_statistics.csv')
+
+    return df

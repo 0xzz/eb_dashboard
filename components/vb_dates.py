@@ -1,6 +1,7 @@
 from helpers import load_vb_dates
 import dash_html_components as html
 import dash_core_components as dcc
+from .default_config import default_config
 
 def get_final_action_dates_figures():
     eb1_dates, eb2_dates, eb3_dates, _ = load_vb_dates()
@@ -20,12 +21,12 @@ def get_final_action_dates_figures():
                                   'borderwidth':2}
                     }
                 },
-                config={
-                    "displaylogo": False,
-                    'modeBarButtonsToRemove': ['lasso2d']
-                },
+                config=default_config,
         ), className="col-md-4", style={'padding':'0.5rem','border-radius':'5px'})
         for i, df in enumerate([eb1_dates, eb2_dates, eb3_dates])],
         className = 'row')
 
-    return fig_vb_dates_layout
+    return html.Div([
+        html.Div('Data source at https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin.html'),
+        fig_vb_dates_layout
+    ])

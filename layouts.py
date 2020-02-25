@@ -8,6 +8,8 @@ import dash_html_components as html
 from components.top_navbar import get_navbar
 from components.vb_dates import get_final_action_dates_figures
 from components.data_140_485 import get_overall_140_485_view
+from components.data_140_stats import get_140_stats
+from components.data_gc_stats import get_gc_stats
 
 
 def get_app_layout(app_name):
@@ -21,15 +23,23 @@ def get_app_layout(app_name):
 
     overall_140_485_layout = get_overall_140_485_view()
 
+    stats_140_layout = get_140_stats()
+
+    stats_gc_layout = get_gc_stats()
+
     return html.Div([
               navbar,
             #   tutorial_elements,
             #   hidden_elements,
               html.H4('Final Action Dates History',id='FAD'),
               fig_vb_dates_layout,
-              html.H4('140/485 Anually numbers', id='data_140_485'),
+              html.H4('140/485 Anually numbers Summary', id='data_140_485'),
               overall_140_485_layout,
-              html.H4('Historical statitics on Employment-Based Green Card Application and visa issued', id='data_gc'),
+              html.H4('Historical 140 Statstics', id='data_140'),
+              stats_140_layout,
+              html.H4('Historical Green Card Visa issued statistics', id = 'data_gc'),
+              stats_gc_layout,
+              html.H4('Historical statitics on Employment-Based Green Card Application and visa issued', id='data_backlog'),
             ], className="container-fluid")
 
 
