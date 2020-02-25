@@ -1,8 +1,11 @@
-from helpers import load_140_stats
-import dash_table
 import datetime
+
+import dash_table
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
+
+from helpers import load_140_stats
 from .default_config import default_config
 
 
@@ -58,7 +61,12 @@ def get_140_stats():
     )
     return html.Div([
         html.Div('Data source at https://www.uscis.gov/sites/default/files/USCIS/Resources/Reports%20and%20Studies/Immigration%20Forms%20Data/Employment-based/I140_by_class_country_FY09_19.pdf'),
-        fig_layout,
-        fig_layout2,
-        tb_layout,
+        html.Div('Please note that the approved numbered fo 2019 have been corrected using the pending numbers and historical deny rate'),
+        dbc.Row([
+            dbc.Col([fig_layout],lg=6),
+            dbc.Col([fig_layout2],lg=6),
+        ]),
+        html.Div([
+            tb_layout
+        ], style={'overflow-x': 'auto'})
     ])

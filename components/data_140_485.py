@@ -1,7 +1,9 @@
-from helpers import load_140_485_by_FY
 import dash_table
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
+
+from helpers import load_140_485_by_FY
 from .default_config import default_config
 
 def get_overall_140_485_view():
@@ -32,7 +34,15 @@ def get_overall_140_485_view():
         config=default_config,
     )
 
-    return html.Div([
-        html.Div([tb_layout],className = "col-lg-5", style={'margin':'1rem'}),
-        html.Div([fig_140_485_layout],className = "col-lg-5", style={'margin':'1rem'})
-    ], className = "row")
+    return dbc.Row([
+            dbc.Col([fig_140_485_layout],lg=6),
+            dbc.Col([tb_layout],lg=6),
+        ])
+        
+    
+    
+    
+    # html.Div([
+    #     html.Div([tb_layout],className = "col-lg-5", style={'margin':'1rem'}),
+    #     html.Div([fig_140_485_layout],className = "col-lg-5", style={'margin':'1rem'})
+    # ], className = "row")

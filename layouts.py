@@ -39,7 +39,8 @@ def get_app_layout(app_name):
               stats_140_layout,
               html.H4('Historical Green Card Visa issued statistics', id = 'data_gc'),
               stats_gc_layout,
-              html.H4('Historical statitics on Employment-Based Green Card Application and visa issued', id='data_backlog'),
+              html.H4('EB Backlog Anlysis', id='data_backlog'),
+              html.Div('Feature comming soon')
             ], className="container-fluid")
 
 
