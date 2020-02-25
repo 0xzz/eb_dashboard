@@ -44,5 +44,7 @@ def get_gc_stats():
     return html.Div([
         html.Div('Data source at https://travel.state.gov/content/travel/en/legal/visa-law0/visa-statistics/annual-reports.html'),
         fig_layout,
-        tb_layout,
+        html.Div([
+            tb_layout
+        ], style={'overflow-x': 'auto'})
     ])
