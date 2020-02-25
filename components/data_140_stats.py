@@ -46,10 +46,10 @@ def get_140_stats():
 
     fig_layout2 = dcc.Graph(
         figure={
-            'data': [{'x': x, 'y': df[f'{c}-EB{eb}-Deny_rate'],'name':f'{c}-EB{eb}-Deny-Rate'} \
+            'data': [{'x': x, 'y': df[f'{c}-EB{eb}-Deny_rate'],'name':f'{c}-EB{eb}-Denial-Rate'} \
                         for c in ['China','India','Row'] for eb in [1,2,3]],
             'layout': {
-                'title': 'Historical 140 Deny Rate by Country By Fisical Year Fisical Year',
+                'title': 'Historical 140 Denial Rate by Country By Fisical Year',
                 'xaxis' : {
                     'tickmode' : 'linear',
                     'tick0':2009,
@@ -61,7 +61,7 @@ def get_140_stats():
     )
     return html.Div([
         html.Div('Data source at https://www.uscis.gov/sites/default/files/USCIS/Resources/Reports%20and%20Studies/Immigration%20Forms%20Data/Employment-based/I140_by_class_country_FY09_19.pdf'),
-        html.Div('Please note that the approved numbered fo 2019 have been corrected using the pending numbers and historical deny rate'),
+        html.Div('Please note that the approved numbers of FY2019 have been corrected using the pending numbers and 2019 denial rate'),
         dbc.Row([
             dbc.Col([fig_layout],lg=6),
             dbc.Col([fig_layout2],lg=6),

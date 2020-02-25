@@ -25,7 +25,7 @@ def get_final_action_dates_figures():
                 },
                 config=default_config,
             )
-            ], lg=4)#className="col-lg-4", style={'padding':'0.5rem','border-radius':'5px'})
+            ], lg=4, style={'padding':'3rem'})#className="col-lg-4", style={'padding':'0.5rem','border-radius':'5px'})
         for i, df in enumerate([eb1_dates, eb2_dates, eb3_dates])],
     )
 
