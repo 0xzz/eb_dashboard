@@ -22,11 +22,17 @@ def get_overall_140_485_view():
         },
     )
 
+    figure_data = [{'x': df_140_485['FY'], 
+                      'y': df_140_485[col], 
+                      'name':col,
+                      'visible':True if 'approved' in col else 'legendonly'} \
+                     for col in df_140_485.columns if col!='FY']
+    figure_data.append({'x':[2011.5,2019.5],'y':[14e4/6.5*3.0,14e4/6.5*3.0],
+                        'mode':'lines','line':{'color':'black','dash':'dash'},'name':'Safe 140 threshold'})
     fig_140_485_layout = dcc.Graph(
         #id='example-graph',
         figure={
-            'data': [{'x': df_140_485['FY'], 'y': df_140_485[col], 'name':col} \
-                        for col in df_140_485.columns if col!='FY'],
+            'data': figure_data,
             'layout': {
                 'title': '140/485 data Visualization'
             }
@@ -34,10 +40,13 @@ def get_overall_140_485_view():
         config=default_config,
     )
 
-    return dbc.Row([
+    return html.Div([
+        html.Div('The safe threshold is computed using 140k (total annual EB green card limit) divided by 2.167 (average global 140:visa multiplication factor. An approval number higher than this threshold would lead to backlog in EB green card petition'),
+        dbc.Row([
             dbc.Col([fig_140_485_layout],lg=6),
             dbc.Col([tb_layout],lg=6),
         ])
+    ])
         
     
     

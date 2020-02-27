@@ -24,10 +24,16 @@ def get_gc_stats():
 
     x = list(range(2009,2020))
 
+    fig_data = [{'x': x, 'y': df[f'{c}-EB{eb}'], 'type': 'bar','name':f'{c}-EB{eb}'} \
+                        for c in ['China','India','Row'] for eb in [1,2,3]]
+    fig_data.append({'x':[2008.5,2019.5],'y':[12e4,12e4],
+                        'mode':'lines','line':{'color':'black','dash':'dash'},'name':'EB123 Visa Limit'})
+    fig_data.append({'x':[2008.5,2019.5],'y':[4e4,4e4],
+                         'mode':'lines','line':{'color':'red','dash':'dash'},'name':'EB1/2/3 Visa Limit'})
+    
     fig_layout = dcc.Graph(
         figure={
-            'data': [{'x': x, 'y': df[f'{c}-EB{eb}'], 'type': 'bar','name':f'{c}-EB{eb}'} \
-                        for c in ['China','India','Row'] for eb in [1,2,3]],
+            'data': fig_data,
             'layout': {
                 'title': 'Historical Green Card Visa Number Issued by Fisical year',
                 'barmode':'stack',

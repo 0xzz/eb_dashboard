@@ -33,7 +33,7 @@ def get_app_layout(app_name):
             #   hidden_elements,
               html.H4('Final Action Dates History',id='FAD'),
               fig_vb_dates_layout,
-              html.H4('140/485 Anually numbers Summary', id='data_140_485'),
+              html.H4('140/485 Annual numbers Summary', id='data_140_485'),
               overall_140_485_layout,
               html.H4('Historical 140 Statstics', id='data_140'),
               stats_140_layout,

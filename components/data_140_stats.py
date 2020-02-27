@@ -27,10 +27,18 @@ def get_140_stats():
 
     x = list(range(2009,2020))
 
+    fig_data = [{'x': x, 'y': df[f'{c}-EB{eb}-Approved'], 'type': 'bar','name':f'{c}-EB{eb}-Approved'} \
+                for c in ['China','India','Row'] for eb in [1,2,3]]
+    fig_data.append({'x':[2008,2020],'y':[4e4/2.4,4e4/2.4],
+                        'mode':'lines','line':{'color':'black','dash':'dash'},'name':'Safe EB1 140 threshold'})
+    fig_data.append({'x':[2008,2020],'y':[4e4/2.0,4e4/2.0],
+                        'mode':'lines','line':{'color':'red','dash':'dash'},'name':'Safe EB2 140 threshold'})
+    fig_data.append({'x':[2008,2020],'y':[4e4/2.1,4e4/2.1],
+                        'mode':'lines','line':{'color':'orange','dash':'dash'},'name':'Safe EB3 140 threshold'})
+    
     fig_layout = dcc.Graph(
         figure={
-            'data': [{'x': x, 'y': df[f'{c}-EB{eb}-Approved'], 'type': 'bar','name':f'{c}-EB{eb}-Approved'} \
-                        for c in ['China','India','Row'] for eb in [1,2,3]],
+            'data': fig_data,
             'layout': {
                 'title': 'Historical 140 Approval by Fisical Year',
                 'barmode':'stack',
@@ -61,7 +69,11 @@ def get_140_stats():
     )
     return html.Div([
         html.Div('Data source at https://www.uscis.gov/sites/default/files/USCIS/Resources/Reports%20and%20Studies/Immigration%20Forms%20Data/Employment-based/I140_by_class_country_FY09_19.pdf'),
-        html.Div('Please note that the approved numbers of FY2019 have been corrected using the pending numbers and 2019 denial rate'),
+        html.Div('''Please note that the approved numbers of FY2019 have been 
+corrected using the pending numbers and 2019 denial rate. The safe EB 140 thresholds
+are computed using 40k divided by the corresponding global EB123 multiplication 
+factors: 2.4, 2.0, and 2.1, respectively.
+'''),
         dbc.Row([
             dbc.Col([fig_layout],lg=6),
             dbc.Col([fig_layout2],lg=6),
