@@ -13,7 +13,13 @@ from resources import external_scripts, external_stylesheets, meta_tags
 
 
 app = dash.Dash('EB Information',
-		            external_scripts = [dbc.themes.BOOTSTRAP],
+		            external_scripts = [
+                  dbc.themes.BOOTSTRAP],
+                  # {
+                  #   'href': 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js',
+                  #   'crossorgin': 'anonymous',
+                  #   'data-ad-client': 'ca-pub-4691708742212768'
+                  # }],
                   #external_stylesheets = external_stylesheets,
                 # meta_tags = meta_tags,
                )
