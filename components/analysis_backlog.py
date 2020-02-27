@@ -38,22 +38,22 @@ def get_backlog(multiplication_factor, isStack):
                 'type': 'bar','name':f'{c}-EB{eb} Demand', 
                 'visible': True if c=='China' else 'legendonly'} \
                         for c in ['China','India','Row'] for eb in [1,2,3]]
-    fig_data.append({'x':[2008.5,2019.5],'y':[12e4,12e4],
-                        'mode':'lines','line':{'color':'black','dash':'dash'},
-                        'name':'EB123 Visa Limit','visible':'legendonly'})
-    fig_data.append({'x':[2008.5,2019.5],'y':[4e4,4e4],
-                         'mode':'lines','line':{'color':'red','dash':'dash'},
-                         'name':'EB1/2/3 Visa Limit','visible': 'legendonly'})
-    fig_data.append({'x':[2008.5,2019.5],'y':[2800,2800],
-                         'mode':'lines','line':{'color':'black','dash':'dot'},
-                         'name':'EB1/2/3 7% Cap'})
-                         
     for c in ['China','India','Row']:
         for eb in [1,2,3]:
             fig_data.append({'x': x, 'y': df_visa[f'{c}-EB{eb}'], 
             'name':f'{c}-EB{eb} Issued', 
             'line':{'width':4},
             'visible': True if c=='China' else 'legendonly'})
+    fig_data.append({'x':[2008.5,2019.5],'y':[2800,2800],
+                         'mode':'lines','line':{'color':'black','dash':'dot'},
+                         'name':'EB1/2/3 7% Cap'})
+    fig_data.append({'x':[2008.5,2019.5],'y':[12e4,12e4],
+                        'mode':'lines','line':{'color':'black','dash':'dash'},
+                        'name':'EB123 Visa Limit','visible':'legendonly'})
+    fig_data.append({'x':[2008.5,2019.5],'y':[4e4,4e4],
+                         'mode':'lines','line':{'color':'red','dash':'dash'},
+                         'name':'EB1/2/3 Visa Limit','visible': 'legendonly'})
+                         
                         
     fig_layout = dcc.Graph(
         figure={

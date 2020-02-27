@@ -38,7 +38,7 @@ def get_app_layout(app_name):
                 value = default_multiplication_factor[f'{c}-EB{eb}'],
                 placeholder= default_multiplication_factor[f'{c}-EB{eb}'],
             )
-      ], lg=4)
+      ], md=4)
       for c in ['China','India','Row'] for eb in [1,2,3]])
 
 
