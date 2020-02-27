@@ -59,7 +59,7 @@ def get_backlog(multiplication_factor, isStack):
         figure={
             'data': fig_data,
             'layout': {
-                'title': 'Green Card Demand by Fisical year based on based on 140 data',
+                'title': 'Green Card Demand (based on 140 stats) and Visa Number Issued',
                 'barmode': 'stack' if isStack else 'group',
                 'xaxis' : {
                     'tickmode' : 'linear',
