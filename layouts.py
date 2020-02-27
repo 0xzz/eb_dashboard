@@ -1,7 +1,7 @@
 import dash_daq as daq
-# import dash_core_components as dcc
+import dash_core_components as dcc
 import dash_html_components as html
-# import dash_bootstrap_components as dbc
+import dash_bootstrap_components as dbc
 
 # import uuid
 
@@ -10,6 +10,8 @@ from components.vb_dates import get_final_action_dates_figures
 from components.data_140_485 import get_overall_140_485_view
 from components.data_140_stats import get_140_stats
 from components.data_gc_stats import get_gc_stats
+
+from components.default_config import default_multiplication_factor
 
 
 def get_app_layout(app_name):
@@ -27,6 +29,19 @@ def get_app_layout(app_name):
 
     stats_gc_layout = get_gc_stats()
 
+    multiplication_factor = dbc.Row([
+      dbc.Col([
+        html.Div(f'{c}-EB{eb}'),
+        dcc.Input(
+                id=f'factor_{c}-{eb}',
+                type='number',
+                value = default_multiplication_factor[f'{c}-EB{eb}'],
+                placeholder= default_multiplication_factor[f'{c}-EB{eb}'],
+            )
+      ], lg=4)
+      for c in ['China','India','Row'] for eb in [1,2,3]])
+
+
     return html.Div([
               navbar,
             #   tutorial_elements,
@@ -40,7 +55,16 @@ def get_app_layout(app_name):
               html.H4('Historical Green Card Visa issued statistics', id = 'data_gc'),
               stats_gc_layout,
               html.H4('EB Backlog Anlysis', id='data_backlog'),
-              html.Div('Feature comming soon')
+              html.Div('Please type in the 140:green card multiplication factors'),
+              multiplication_factor,
+              html.Div([
+                html.Div('Switch Stack Mode',style={'display':'inline-block'}),
+                html.Div([daq.ToggleSwitch(
+                  id='gc_demand_bar_plot_stack',
+                  value=False
+                )], style = {'display':'inline-block'})
+              ]),
+              html.Div(id='backlog_div')
             ], className="container-fluid")
 
 

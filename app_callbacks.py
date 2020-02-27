@@ -17,6 +17,7 @@ import numpy as np
 import os
 import glob
 
+from components.analysis_backlog import get_backlog
 
 with open("tutorial_description.md", "r") as file:
     tutorial_description_md = file.read()
@@ -54,30 +55,29 @@ def set_app_callbacks(app, app_name):
                 "Tutorial",
             )
 
+    @app.callback(
+        Output('backlog_div', 'children'),
+        [Input(f'factor_{c}-{eb}', 'value') \
+            for c in ['China', 'India', 'Row'] \
+            for eb in [1,2,3]] \
+        + [Input('gc_demand_bar_plot_stack','value')]
+    )
+    def update_backlog_analysis(*arg):
+        factors = {}
+        ind = 0
+        for c in ['China','India','Row']:
+            for eb in [1,2,3]:
+                factors[f'{c}-EB{eb}'] = arg[ind]
+                ind+=1
+        print(factors)
+        isStack = arg[-1]
+        backlog_layout = get_backlog(factors, isStack)
+        return backlog_layout
+
+
 def is_button_clicked(ind, time_stamp_list):
     t0 = time_stamp_list[ind]
     for i, t in enumerate(time_stamp_list):
         if i!=ind and t>=t0:
             return False
     return True
-
-def get_session_obj(session_id):
-    '''
-    given sesion id, read the session objects from local file system and return the objects
-    '''
-    file_path = os.path.join('sessions',session_id,'session.pkl')
-    with open(file_path,'rb') as f:
-        s_obj = pickle.load(f)
-    return s_obj
-
-def save_session_obj(sobj):
-    '''
-    save the session object to the correct location
-    '''
-    file_path = os.path.join(sobj.dir_path,'session.pkl')
-    with open(file_path,'wb') as f:
-        pickle.dump(sobj,f)
-
-def found_session(session_id):
-    file_path = os.path.join('sessions',session_id,'session.pkl')
-    return os.path.isfile(file_path)
