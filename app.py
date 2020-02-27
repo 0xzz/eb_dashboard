@@ -29,6 +29,10 @@ set_app_callbacks(app, app_name)
 
 app.layout = get_app_layout(app_name)
 
+# app.scripts.append_script({
+# 'external_url':'ads.js'
+# })
+
 if __name__ == '__main__':
     app.run_server(debug=True, host="0.0.0.0")
 

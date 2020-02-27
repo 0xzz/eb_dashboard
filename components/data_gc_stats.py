@@ -30,6 +30,8 @@ def get_gc_stats(isStack):
                         'mode':'lines','line':{'color':'black','dash':'dash'},'name':'EB123 Visa Limit'})
     fig_data.append({'x':[2008.5,2019.5],'y':[4e4,4e4],
                          'mode':'lines','line':{'color':'red','dash':'dash'},'name':'EB1/2/3 Visa Limit'})
+    fig_data.append({'x':[2008.5,2019.5],'y':[2800,2800],
+                         'mode':'lines','line':{'color':'orange','dash':'dash'},'name':'EB1/2/3 7% cap'})
     
     fig_layout = dcc.Graph(
         figure={
