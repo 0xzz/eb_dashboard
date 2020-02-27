@@ -19,7 +19,7 @@ def get_final_action_dates_figures():
                     'layout': {
                         'title': f'Eb-{i+1} Final Action Dates',
                         'xaxis': {'range':[datetime.datetime(2013,10,1),datetime.datetime(2020,4,1)]},
-                        'margin':{'l':35, 'r':25,'b':30},
+                        'margin':{'l':35, 'r':25,'b':30, 't':25},
                         'legend':{'x':.05, 'y':.95,
                                   'bgcolor':"#DDDDDD",
                                   'bordercolor':'gray',
@@ -33,7 +33,12 @@ def get_final_action_dates_figures():
     )
 
     return html.Div([
-        html.Div('Data source at https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin.html'),
-        html.Div('Double Click white space in the three charts to zoom out and view the FA dates back to 2007'),
+        html.P([
+            html.Div([
+                'Data source at USCIS Monthly Visa Bulletin',
+                html.A(' Here', href='https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin.html', target='_blank')
+            ]),
+            html.Div('Double Click white space in the three charts to zoom out and view the FA dates back to 2007'),
+        ]),
         fig_vb_dates_layout
     ])

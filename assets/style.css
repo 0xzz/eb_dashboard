@@ -36,7 +36,7 @@
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .container {
   position: relative;
-  width: 100%;
+  width: 80%;
   max-width: 960px;
   margin: 0 auto;
   padding: 0 20px;
@@ -50,7 +50,7 @@
 /* For devices larger than 400px */
 @media (min-width: 400px) {
   .container {
-    width: 85%;
+    width: 80%;
     padding: 0; }
 }
 
@@ -127,6 +127,8 @@ are based on 10px sizing. So basically 1.5rem = 15px :) */
 html {
   font-size: 62.5%; }
 body {
+  width: 75%;
+  margin: 0 auto;
   font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
   line-height: 1.6;
   font-weight: 400;

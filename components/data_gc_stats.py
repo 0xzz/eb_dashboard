@@ -6,7 +6,7 @@ import dash_core_components as dcc
 from .default_config import default_config
 
 
-def get_gc_stats():
+def get_gc_stats(isStack):
 
     df = load_gc_stats()
 
@@ -36,7 +36,7 @@ def get_gc_stats():
             'data': fig_data,
             'layout': {
                 'title': 'Historical Green Card Visa Number Issued by Fisical year',
-                'barmode':'stack',
+                'barmode':'stack' if isStack else 'group',
                 'xaxis' : {
                     'tickmode' : 'linear',
                     'tick0':2009,
@@ -48,7 +48,6 @@ def get_gc_stats():
     )
 
     return html.Div([
-        html.Div('Data source at https://travel.state.gov/content/travel/en/legal/visa-law0/visa-statistics/annual-reports.html'),
         fig_layout,
         html.Div([
             tb_layout

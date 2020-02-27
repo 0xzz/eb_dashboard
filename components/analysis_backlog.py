@@ -9,6 +9,7 @@ from helpers import load_140_stats, load_gc_stats
 from .default_config import default_config
 from .default_config import default_multiplication_factor
 
+
 def get_backlog(multiplication_factor, isStack):
 
     df140 = load_140_stats()
@@ -53,8 +54,7 @@ def get_backlog(multiplication_factor, isStack):
     fig_data.append({'x':[2008.5,2019.5],'y':[4e4,4e4],
                          'mode':'lines','line':{'color':'red','dash':'dash'},
                          'name':'EB1/2/3 Visa Limit','visible': 'legendonly'})
-                         
-                        
+
     fig_layout = dcc.Graph(
         figure={
             'data': fig_data,
@@ -71,12 +71,8 @@ def get_backlog(multiplication_factor, isStack):
         config=default_config,
     )
 
+
     return  html.Div([
-        html.Div('''The green card demands are estimated based on 140 
-    approval numbers and the multiplication numbers. Please note that these 
-    numbers do not equal to the amount of pending 485. Instead, the numbers 
-    here equal to the "amount of green card demand who already has a PD.
-    '''),
         fig_layout,
         html.Div([
             tb_layout

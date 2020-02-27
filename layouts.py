@@ -1,4 +1,3 @@
-import dash_daq as daq
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
@@ -6,13 +5,12 @@ import dash_bootstrap_components as dbc
 # import uuid
 
 from components.top_navbar import get_navbar
+from components.intro import get_intro
 from components.vb_dates import get_final_action_dates_figures
 from components.data_140_485 import get_overall_140_485_view
-from components.data_140_stats import get_140_stats
-from components.data_gc_stats import get_gc_stats
+from components.toggle_switch import get_toggle
 
 from components.default_config import default_multiplication_factor
-
 
 def get_app_layout(app_name):
     '''
@@ -21,15 +19,13 @@ def get_app_layout(app_name):
 
     navbar = get_navbar(app_name)
 
+    intro_layout = get_intro()
+
     fig_vb_dates_layout = get_final_action_dates_figures()
 
     overall_140_485_layout = get_overall_140_485_view()
 
-    stats_140_layout = get_140_stats()
-
-    stats_gc_layout = get_gc_stats()
-
-    multiplication_factor = dbc.Row([
+    multiplication_factor_layout = dbc.Row([
       dbc.Col([
         html.Div(f'{c}-EB{eb}'),
         dcc.Input(
@@ -37,33 +33,52 @@ def get_app_layout(app_name):
                 type='number',
                 value = default_multiplication_factor[f'{c}-EB{eb}'],
                 placeholder= default_multiplication_factor[f'{c}-EB{eb}'],
+                step = 0.01, min = 0.5, max = 5.0, style={'maxWidth': '80px'}
             )
-      ], md=4)
-      for c in ['China','India','Row'] for eb in [1,2,3]])
-
+      ], sm=4) for c in ['China','India','Row'] for eb in [1,2,3]])
 
     return html.Div([
               navbar,
+              intro_layout,
             #   tutorial_elements,
             #   hidden_elements,
               html.H4('Final Action Dates History',id='FAD'),
               fig_vb_dates_layout,
               html.H4('140/485 Annual numbers Summary', id='data_140_485'),
               overall_140_485_layout,
+
               html.H4('Historical 140 Statstics', id='data_140'),
-              stats_140_layout,
-              html.H4('Historical Green Card Visa issued statistics', id = 'data_gc'),
-              stats_gc_layout,
-              html.H4('EB Backlog Anlysis', id='data_backlog'),
-              html.Div('Please type in the 140:green card multiplication factors'),
-              multiplication_factor,
-              html.Div([
-                html.Div('Switch Stack Mode',style={'display':'inline-block'}),
-                html.Div([daq.ToggleSwitch(
-                  id='gc_demand_bar_plot_stack',
-                  value=False
-                )], style = {'display':'inline-block'})
+              html.P([
+                html.Div([
+                  'Data source at USCIS ', 
+                  html.A('here', href='https://www.uscis.gov/sites/default/files/USCIS/Resources/Reports%20and%20Studies/Immigration%20Forms%20Data/Employment-based/I140_by_class_country_FY09_19.pdf', target='_blank')
+                ]),
+                html.Div('''Please note that the approved numbers of FY2019 have been 
+corrected using the pending numbers and 2019 denial rate. The safe EB 140 thresholds
+are computed using 40k divided by the corresponding global EB123 multiplication 
+factors: 2.4, 2.0, and 2.1, respectively.
+'''),
               ]),
+              get_toggle('140_stats_stack_toggle'),
+              html.Div(id='140_stats_div'),
+
+              html.H4('Historical Green Card Visa issued statistics', id = 'data_gc'),
+              html.P([
+                'Data source can be found in DOS Annual Reports ', 
+                html.A('Here', href='https://travel.state.gov/content/travel/en/legal/visa-law0/visa-statistics/annual-reports.html',target='_blank')
+              ]),
+              get_toggle('gc_stats_stack_toggle'),
+              html.Div(id='gc_stats_div'),
+
+              html.H4('EB Backlog Anlysis', id='data_backlog'),
+              html.P('''The green card demands are estimated based on 140 
+    approval numbers and the multiplication numbers. Please note that these 
+    numbers do not equal to the amount of pending 485/CP application. Instead, the numbers 
+    here equal to the "amount of green card demand who already has a PD.
+    '''),
+              html.Div('Please type in the [140:green card] multiplication factors'),
+              multiplication_factor_layout,
+              get_toggle('gc_demand_stack_toggle', False),
               html.Div(id='backlog_div')
             ], className="container-fluid")
 

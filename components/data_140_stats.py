@@ -9,7 +9,7 @@ from helpers import load_140_stats
 from .default_config import default_config
 
 
-def get_140_stats():
+def get_140_stats(isStack):
 
     df = load_140_stats()
 
@@ -41,7 +41,7 @@ def get_140_stats():
             'data': fig_data,
             'layout': {
                 'title': 'Historical 140 Approval by Fisical Year',
-                'barmode':'stack',
+                'barmode':'stack' if isStack else 'group',
                 'xaxis' : {
                     'tickmode' : 'linear',
                     'tick0':2009,
@@ -67,13 +67,8 @@ def get_140_stats():
         },
         config=default_config,
     )
+    
     return html.Div([
-        html.Div('Data source at https://www.uscis.gov/sites/default/files/USCIS/Resources/Reports%20and%20Studies/Immigration%20Forms%20Data/Employment-based/I140_by_class_country_FY09_19.pdf'),
-        html.Div('''Please note that the approved numbers of FY2019 have been 
-corrected using the pending numbers and 2019 denial rate. The safe EB 140 thresholds
-are computed using 40k divided by the corresponding global EB123 multiplication 
-factors: 2.4, 2.0, and 2.1, respectively.
-'''),
         dbc.Row([
             dbc.Col([fig_layout],lg=6),
             dbc.Col([fig_layout2],lg=6),

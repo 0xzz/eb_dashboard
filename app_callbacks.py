@@ -18,6 +18,8 @@ import os
 import glob
 
 from components.analysis_backlog import get_backlog
+from components.data_140_stats import get_140_stats
+from components.data_gc_stats import get_gc_stats
 
 with open("tutorial_description.md", "r") as file:
     tutorial_description_md = file.read()
@@ -60,7 +62,7 @@ def set_app_callbacks(app, app_name):
         [Input(f'factor_{c}-{eb}', 'value') \
             for c in ['China', 'India', 'Row'] \
             for eb in [1,2,3]] \
-        + [Input('gc_demand_bar_plot_stack','value')]
+        + [Input('gc_demand_stack_toggle','value')]
     )
     def update_backlog_analysis(*arg):
         factors = {}
@@ -74,6 +76,20 @@ def set_app_callbacks(app, app_name):
         backlog_layout = get_backlog(factors, isStack)
         return backlog_layout
 
+
+    @app.callback(
+        Output('140_stats_div', 'children'),
+        [Input('140_stats_stack_toggle','value')]
+    )
+    def update_140_analysis(isStack):
+        return get_140_stats(isStack)
+
+    @app.callback(
+        Output('gc_stats_div', 'children'),
+        [Input('gc_stats_stack_toggle','value')]
+    )
+    def update_gc_analysis(isStack):
+        return get_gc_stats(isStack)
 
 def is_button_clicked(ind, time_stamp_list):
     t0 = time_stamp_list[ind]
