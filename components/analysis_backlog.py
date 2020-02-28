@@ -75,7 +75,7 @@ def get_backlog(multiplication_factor, isStack):
     tb485_backlog_layout = get_table(df485_backlog[[col for col in df485_backlog if 'backlog' in col or 'FY' in col]])
 
     demand_supply_fig_layout = get_demand_supply_fig(df485, df_visa, isStack)
-    backlog_fig_layout = get_backlog_fig(df485, df_visa, df485_backlog)
+    backlog_fig_layout = get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor)
 
     #India. At end of FY2018, India EB2 reached to Mar 2009
     #       At end of FY2018, India EB3 reached to Jan 2009
@@ -147,7 +147,7 @@ def get_demand_supply_fig(df485, df_visa, isStack):
 
 
 
-def get_backlog_fig(df485, df_visa, df485_backlog):
+def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
 
     x = np.array(list(range(2009,2020)))
     figs = []
@@ -161,15 +161,22 @@ def get_backlog_fig(df485, df_visa, df485_backlog):
             # print(df485[col], df_visa[col], df485_backlog[f'{col}-backlog'])
 
             fig_data = [{'x': x+0.5, 'y': df485[col].values, 'type': 'bar','name':f'{c}-EB{eb} Demand', 'marker':{'color':'#EE4444'}},
-                 {'x': x+0.5, 'y': df_visa[col].values, 'base': -df_visa[col].values, 'type': 'bar','name':f'{c}-EB{eb} Issued', 'marker':{'color':'#44EE44'}},
-                 {'x': x+0.9, 'y': df485_backlog[f'{col}-backlog'].values, 'type': 'lines','name':f'{c}-EB{eb} backlog','marker':{'color':'black'}}
+                 {'x': x+0.5, 'y': -df_visa[col].values, 'base': 0, 'type': 'bar','name':f'{c}-EB{eb} Issued', 'marker':{'color':'#44EE44'}},
+                 {'x': x+0.99, 'y': df485_backlog[f'{col}-backlog'].values, 'type': 'lines','name':f'{c}-EB{eb} backlog','marker':{'color':'black'}}
             ]
+
+            if(eb==1):
+                mf_msg = f' [MultiFactor={multiplication_factor[col]}]'
+            else:
+                c1= f'{c}-EB2'
+                c2= f'{c}-EB3'
+                mf_msg = f' [MultiFactor={multiplication_factor[c1]} (EB2), {multiplication_factor[c2]} (EB3)]'
 
             fig_layout = dcc.Graph(
                 figure={
                     'data': fig_data,
                     'layout': {
-                        'title': f'{c}-EB{eb} Backlog Analysis',
+                        'title': f'{c}-EB{eb} Backlog Analysis {mf_msg}',
                         'barmode': 'stack',
                         'legend':{'x':.01, 'y':.99,
                                    'bgcolor':"#DDDDDD00",

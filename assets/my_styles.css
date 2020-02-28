@@ -29,7 +29,8 @@ p {
   max-width: 60%;
   border-color: #2196F3;
   border-left: 6px solid #2196F3;
-  background-color: #ddffff;  
+  background-color: #ddffff;
+  color: #555;  
 }
 
 H4 {
