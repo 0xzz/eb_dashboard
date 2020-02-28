@@ -166,17 +166,21 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
             ]
 
             if(eb==1):
-                mf_msg = f' [MultiFactor={multiplication_factor[col]}]'
+                mf_msg = f'[MultiFactor={multiplication_factor[col]}]'
             else:
                 c1= f'{c}-EB2'
                 c2= f'{c}-EB3'
-                mf_msg = f' [MultiFactor={multiplication_factor[c1]} (EB2), {multiplication_factor[c2]} (EB3)]'
+                mf_msg = f'[MultiFactor={multiplication_factor[c1]}(EB2), {multiplication_factor[c2]}(EB3)]'
 
             fig_layout = dcc.Graph(
                 figure={
                     'data': fig_data,
                     'layout': {
-                        'title': f'{c}-EB{eb} Backlog Analysis {mf_msg}',
+                        'hovermode':'closest',
+                        'title': f'{c}-EB{eb} Backlog {mf_msg}',
+                        'font': {
+                            'size': '0.85rem'
+                        },
                         'barmode': 'stack',
                         'legend':{'x':.01, 'y':.99,
                                    'bgcolor':"#DDDDDD00",
