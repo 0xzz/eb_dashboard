@@ -186,6 +186,6 @@ def get_backlog_fig(df485, df_visa, df485_backlog):
                 config=default_config,
                 style={'margin':'1rem'}
             )
-            figs.append(dbc.Col([fig_layout],md=4))
+            figs.append(dbc.Col([fig_layout],lg=4))
 
     return dbc.Row(figs)
