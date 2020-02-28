@@ -70,7 +70,7 @@ factors: 2.4, 2.0, and 2.1, respectively.
               get_toggle('gc_stats_stack_toggle'),
               html.Div(id='gc_stats_div'),
 
-              html.H4('EB Backlog Anlysis', id='data_backlog'),
+              html.H4('EB Green Card Demand and Backlog Anlysis', id='data_demand'),
               html.P('''The green card demands are estimated based on 140 
     approval numbers and the multiplication numbers. Please note that these 
     numbers do not equal to the amount of pending 485/CP application. Instead, the numbers 
@@ -79,7 +79,7 @@ factors: 2.4, 2.0, and 2.1, respectively.
               html.Div('Please type in the [140:green card] multiplication factors'),
               multiplication_factor_layout,
               get_toggle('gc_demand_stack_toggle', False),
-              html.Div(id='backlog_div')
+              html.Div(id='demand_div')
             ], className="container-fluid")
 
 

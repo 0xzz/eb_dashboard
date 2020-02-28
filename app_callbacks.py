@@ -58,7 +58,7 @@ def set_app_callbacks(app, app_name):
             )
 
     @app.callback(
-        Output('backlog_div', 'children'),
+        Output('demand_div', 'children'),
         [Input(f'factor_{c}-{eb}', 'value') \
             for c in ['China', 'India', 'Row'] \
             for eb in [1,2,3]] \

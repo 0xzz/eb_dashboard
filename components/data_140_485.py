@@ -5,22 +5,13 @@ import dash_bootstrap_components as dbc
 
 from helpers import load_140_485_by_FY
 from .default_config import default_config
+from .get_table import get_table
 
 def get_overall_140_485_view():
 
     df_140_485 = load_140_485_by_FY()
 
-    tb_layout = dash_table.DataTable(
-        # id = 'table',
-        columns=[{"name": i, "id": i} for i in df_140_485.columns],
-        data=df_140_485.to_dict('records'),
-        sort_action="native",
-        style_cell={
-            'minWidth': '80px', 'width': '80px', 'maxWidth': '80px',
-            'overflow': 'hidden',
-            'textOverflow': 'ellipsis',
-        },
-    )
+    tb_layout = get_table(df_140_485)
 
     figure_data = [{'x': df_140_485['FY'], 
                       'y': df_140_485[col], 

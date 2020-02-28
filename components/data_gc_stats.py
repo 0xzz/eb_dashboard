@@ -4,23 +4,13 @@ import datetime
 import dash_html_components as html
 import dash_core_components as dcc
 from .default_config import default_config
-
+from .get_table import get_table
 
 def get_gc_stats(isStack):
 
     df = load_gc_stats()
 
-    tb_layout = dash_table.DataTable(
-        # id = 'table',
-        columns=[{"name": i, "id": i} for i in df.columns],
-        data=df.to_dict('records'),
-        sort_action="native",
-        style_cell={
-            'minWidth': '80px', 'width': '80px', 'maxWidth': '80px',
-            'overflow': 'hidden',
-            'textOverflow': 'ellipsis',
-        },
-    )
+    tb_layout = get_table(df)
 
     x = list(range(2009,2020))
 
