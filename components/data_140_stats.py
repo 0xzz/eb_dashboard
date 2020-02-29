@@ -63,17 +63,29 @@ def get_140_stats(isStack):
                     'tick0':2009,
                     'dtick':1
                 },
+                'autosize': False
             }
         },
         config=default_config,
     )
     
-    return html.Div([
-        dbc.Row([
-            dbc.Col([fig_layout],lg=6),
-            dbc.Col([fig_layout2],lg=6),
-        ]),
-        html.Div([
-            tb_layout
-        ], style={'overflow-x': 'auto'})
-    ])
+    # return html.Div([
+    #     dbc.Row([
+    #         dbc.Col([fig_layout],lg=6),
+    #         dbc.Col([fig_layout2],lg=6),
+    #     ]),
+    #     html.Div([
+    #         tb_layout
+    #     ], style={'overflow-x': 'auto'})
+    # ])
+
+
+    return dbc.Tabs([
+            dbc.Tab(fig_layout,label="140 Approval"),
+            dbc.Tab(fig_layout2,label="Denial Rate"),
+            dbc.Tab(html.Div([
+             tb_layout
+         ], style={'overflow-x': 'auto'}),label="View Table")
+            # dbc.Col([fig_140_485_layout],lg=6),
+            # dbc.Col([tb_layout],lg=6),
+        ])

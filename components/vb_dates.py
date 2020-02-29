@@ -32,6 +32,27 @@ def get_final_action_dates_figures():
         for i, df in enumerate([eb1_dates, eb2_dates, eb3_dates])],
     )
 
+    tabs_content =[
+            dcc.Graph(
+                #id='example-graph',
+                figure={
+                    'data': [{'x': df['date'], 'y': df[col], 'name':col, 'hoverinfo':"x+y"} for col in df.columns if col!='date'],
+                    'layout': {
+                        'title': f'Eb-{i+1} Final Action Dates',
+                        'xaxis': {'range':[datetime.datetime(2013,10,1),datetime.datetime(2020,4,1)]},
+                        'margin':{'l':35, 'r':25,'b':30, 't':25},
+                        'legend':{'x':.05, 'y':.95,
+                                  'bgcolor':"#DDDDDD",
+                                  'bordercolor':'gray',
+                                  'borderwidth':2},
+                        'height':'400px',
+                        'width':'80%',
+                        'autosize':False
+                    }
+                },
+                config=default_config,
+            ) for i, df in enumerate([eb1_dates, eb2_dates, eb3_dates])]
+
     return html.Div([
         html.P([
             html.Div([
@@ -40,5 +61,12 @@ def get_final_action_dates_figures():
             ]),
             html.Div('Double Click white space in the three charts to zoom out and view the FA dates back to 2007'),
         ]),
-        fig_vb_dates_layout
+        #fig_vb_dates_layout
+        dbc.Tabs(
+            [
+                dbc.Tab(tabs_content[0], label='EB 1',style={'height':'400px'}),
+                dbc.Tab(tabs_content[1], label='EB 2',style={'height':'400px'}),
+                dbc.Tab(tabs_content[2], label='EB 3',style={'height':'400px'})                
+            ]
+        )
     ])

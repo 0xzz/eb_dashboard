@@ -90,7 +90,7 @@ def set_app_callbacks(app, app_name):
             for eb in [1,2,3]:
                 factors[f'{c}-EB{eb}'] = arg[ind]
                 ind+=1
-        print(factors)
+        # print(factors)
         isStack = arg[-1]
         backlog_layout = get_backlog(factors, isStack)
         return backlog_layout

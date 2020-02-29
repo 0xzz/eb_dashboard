@@ -37,7 +37,6 @@ class CustomIndexDash(dash.Dash):
         return google_ads_str
 
     def _format_tag(self, tag_name, attributes, inner="", closed=False, opened=False):
-        print(attributes)
         tag = "<{tag} {attributes}"
         if closed:
             tag += "/>"
@@ -60,10 +59,10 @@ class CustomIndexDash(dash.Dash):
         css = self._generate_css_dist_html()
         config = self._generate_config_html()
         metas = self._generate_meta_html()
-        metas += ('\n'+adsense_js)
-
+        
         renderer = self._generate_renderer()
         title = getattr(self, "title", "Dash")
+        title += ('\n'+adsense_js)
 
         if self._favicon:
             favicon_mod_time = os.path.getmtime(

@@ -33,9 +33,11 @@ def get_overall_140_485_view():
 
     return html.Div([
         html.P('The safe threshold is computed using 140k (total annual EB green card limit) divided by 2.167 (average global 140:visa multiplication factor. An approval number higher than this threshold would lead to backlog in EB green card petition'),
-        dbc.Row([
-            dbc.Col([fig_140_485_layout],lg=6),
-            dbc.Col([tb_layout],lg=6),
+        dbc.Tabs([
+            dbc.Tab(fig_140_485_layout,label="View Trend"),
+            dbc.Tab(tb_layout,label="View Data")
+            # dbc.Col([fig_140_485_layout],lg=6),
+            # dbc.Col([tb_layout],lg=6),
         ])
     ])
         
