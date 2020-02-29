@@ -11,8 +11,9 @@ import dash_html_components as html
 
 from resources import external_scripts, external_stylesheets, meta_tags
 
+from EbDashClass import CustomIndexDash
 
-app = dash.Dash('EB Information',
+app = CustomIndexDash('EB Information',
 		            external_scripts = [
                   dbc.themes.BOOTSTRAP],
                   # {
@@ -34,10 +35,6 @@ app_name = 'EB Stats'
 set_app_callbacks(app, app_name)
 
 app.layout = get_app_layout(app_name)
-
-# app.scripts.append_script({
-# 'external_url':'ads.js'
-# })
 
 if __name__ == '__main__':
     app.run_server(debug=True, host="0.0.0.0")

@@ -28,6 +28,25 @@ into_description_md = ''
 
 def set_app_callbacks(app, app_name):
 
+    # app.clientside_callback(
+    #     ClientsideFunction(
+    #         namespace='clientside',
+    #         function_name='display'
+    #     ),
+    #     Output('contact-us-modal', 'children'),
+    #     [Input('contact_us', 'n_clicks')]
+    # )
+
+    @app.callback(
+        Output("contact-us-modal", "is_open"),
+        [Input("contact_us", "n_clicks")],
+        [State("contact-us-modal", "is_open")]
+    )
+    def toggle_contact_us_modal(n1, is_open):
+        if n1:
+            return not is_open
+        return is_open
+        
     # Callback function for the learn-more button
     @app.callback(
         [Output("description-text", "children"),
