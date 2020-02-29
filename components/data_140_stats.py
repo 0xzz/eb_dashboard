@@ -7,23 +7,14 @@ import dash_bootstrap_components as dbc
 
 from helpers import load_140_stats
 from .default_config import default_config
+from .get_table import get_table
 
 
 def get_140_stats(isStack):
 
     df = load_140_stats()
 
-    tb_layout = dash_table.DataTable(
-        # id = 'table',
-        columns=[{"name": i, "id": i} for i in df.columns],
-        data=df.to_dict('records'),
-        sort_action="native",
-        style_cell={
-            'minWidth': '80px', 'width': '80px', 'maxWidth': '80px',
-            'overflow': 'hidden',
-            'textOverflow': 'ellipsis',
-        },
-    )
+    tb_layout = get_table(df)
 
     x = list(range(2009,2020))
 
@@ -63,7 +54,7 @@ def get_140_stats(isStack):
                     'tick0':2009,
                     'dtick':1
                 },
-                'autosize': False
+                # 'autosize': False
             }
         },
         config=default_config,
@@ -80,12 +71,10 @@ def get_140_stats(isStack):
     # ])
 
 
-    return dbc.Tabs([
-            dbc.Tab(fig_layout,label="140 Approval"),
-            dbc.Tab(fig_layout2,label="Denial Rate"),
-            dbc.Tab(html.Div([
-             tb_layout
-         ], style={'overflow-x': 'auto'}),label="View Table")
+    return dcc.Tabs(children=[
+            dcc.Tab(fig_layout,label="140 Approval Stats"),
+            dcc.Tab(fig_layout2,label="140 Denial Rate"),
+            dcc.Tab(tb_layout,label="View Table")
             # dbc.Col([fig_140_485_layout],lg=6),
             # dbc.Col([tb_layout],lg=6),
         ])

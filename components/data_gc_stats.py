@@ -39,9 +39,7 @@ def get_gc_stats(isStack):
         config=default_config,
     )
 
-    return html.Div([
-        fig_layout,
-        html.Div([
-            tb_layout
-        ], style={'overflow-x': 'auto'})
+    return dcc.Tabs([
+        dcc.Tab(fig_layout, label='Historical Visa Number issued'),
+        dcc.Tab(tb_layout, label='View Table')
     ])

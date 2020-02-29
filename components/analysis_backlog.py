@@ -75,16 +75,18 @@ def get_backlog(multiplication_factor, isStack):
     tb485_backlog_layout = get_table(df485_backlog[[col for col in df485_backlog if 'backlog' in col or 'FY' in col]])
 
     demand_supply_fig_layout = get_demand_supply_fig(df485, df_visa, isStack)
-    backlog_fig_layout = get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor)
+    backlog_fig_tabs = get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor)
 
     #India. At end of FY2018, India EB2 reached to Mar 2009
     #       At end of FY2018, India EB3 reached to Jan 2009
     #Assuming that, at the end of FY2018, all backlog before 2009 and half of the demand in 2009 have been satisfied
 
     return  html.Div([
-        demand_supply_fig_layout,
         html.H6('EB123 Green Card Demand Estimation by Country by FY'),
-        tb485_layout,
+        dcc.Tabs([
+            dcc.Tab(demand_supply_fig_layout,label="View Trend"),
+            dcc.Tab(tb485_layout,label="View Table")
+        ]),
         html.P([
             html.Div('Note: Please note that the backlog here referes to the green card demands (regardless on if the petitioner has submitted 485 or not) that already have a PD. If a person already has an approved 140, we asume he/she brings or will bring [1*multiplication factor] number of green card demand.'),
             html.Div('      The backlog analysis will help you understand how many people are in front of you in the long waiting queue. Based on simple computation, you can esitmate how long you would need to wait to get a green card.'),
@@ -98,9 +100,10 @@ def get_backlog(multiplication_factor, isStack):
             html.Div('  5. For Row EB2 & EB3, we assume that at the end of FY 2018, all backlogs before 2017 and 75% of 2017 demands had been satisfied. This is because the VBs for ROW EB2/3 were current at that time.'),
             html.Div('  6. For India EB2 & EB3, we assume that at the end of FY 2018, all backlogs before FY2009 and 50% of 2009 demands were cleared. This is because Inida EB2/3 moved to Mar 2009 and Jan 2009 at the end of FY 2019, respectively.')
         ]),
-        backlog_fig_layout,
         html.H6('EB123 Green Card Backlog Estimation by Country by FY'),
-        tb485_backlog_layout
+        dcc.Tabs(
+            backlog_fig_tabs + [dcc.Tab(tb485_backlog_layout,label="View Table")]
+        )
     ])
 
 def get_demand_supply_fig(df485, df_visa, isStack):
@@ -150,13 +153,13 @@ def get_demand_supply_fig(df485, df_visa, isStack):
 def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
 
     x = np.array(list(range(2009,2020)))
-    figs = []
+    fig_tabs = []
     for c in ['China','India','Row']:
         df485[f'{c}-EB23'] = df485[f'{c}-EB2'] +df485[f'{c}-EB3'] 
         df_visa[f'{c}-EB23'] = df_visa[f'{c}-EB2'] +df_visa[f'{c}-EB3'] 
         df485_backlog[f'{c}-EB23-backlog'] = df485_backlog[f'{c}-EB2-backlog'] +df485_backlog[f'{c}-EB3-backlog'] 
-    for eb in [1,23]:
-        for c in ['China','India','Row']:
+    for c in ['China','India','Row']:
+        for eb in [1,23]:
             col = f'{c}-EB{eb}'
             # print(df485[col], df_visa[col], df485_backlog[f'{col}-backlog'])
 
@@ -197,6 +200,6 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
                 config=default_config,
                 style={'margin':'1rem'}
             )
-            figs.append(dbc.Col([fig_layout],lg=4))
+            fig_tabs.append(dcc.Tab(fig_layout,label=f'{c}-EB{eb}'))
 
-    return dbc.Row(figs)
+    return fig_tabs

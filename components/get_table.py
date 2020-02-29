@@ -9,7 +9,7 @@ def get_table(df):
             data=df.to_dict('records'),
             sort_action="native",
             style_cell={
-                'minWidth': '40px', 'width': '50px', 'maxWidth': '80px',
+                'minWidth': '40px', 'width': '60px', 'maxWidth': '80px',
                 'overflow': 'hidden',
                 'textOverflow': 'ellipsis',
             },
