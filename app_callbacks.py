@@ -45,6 +45,14 @@ def set_app_callbacks(app, app_name):
         Output('140_stats_stack_toggle_display','children'),
         [Input('140_stats_stack_toggle', 'value')]
     )
+    app.clientside_callback(
+        ClientsideFunction(
+            namespace='clientside',
+            function_name='toggle_stack_msg'
+        ),
+        Output('gc_stats_stack_toggle_display','children'),
+        [Input('gc_stats_stack_toggle', 'value')]
+    )
 
 
     @app.callback(
@@ -105,24 +113,12 @@ def set_app_callbacks(app, app_name):
         backlog_layout = get_backlog(factors, isStack)
         return backlog_layout
 
-
-    # @app.callback(
-    #     [Output('140_stats_fig', 'figure'),
-    #      Output('140_stats_stack_toggle_display','children')],
-    #     [Input('140_stats_stack_toggle','value')]
-    # )
-    # def update_140_stats_figure(isStack):
-    #     return update_140_stats_figure_content(isStack),\
-    #            'Switch to Group Mode' if isStack else 'Switch to Stack Mode'
-
     @app.callback(
-        [Output('gc_stats_fig', 'figure'),
-         Output('gc_stats_stack_toggle_display','children')],
+        Output('gc_stats_fig', 'figure'),
         [Input('gc_stats_stack_toggle','value')]
     )
     def update_gc_analysis(isStack):
-        return update_gc_stats_figure_content(isStack),\
-               'Switch to Group Mode' if isStack else 'Switch to Stack Mode'
+        return update_gc_stats_figure_content(isStack)
 
 def is_button_clicked(ind, time_stamp_list):
     t0 = time_stamp_list[ind]
