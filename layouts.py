@@ -10,74 +10,48 @@ from components.vb_dates import get_final_action_dates_figures
 from components.data_140_485 import get_overall_140_485_view
 from components.data_140_stats import get_140_stats
 from components.data_gc_stats import get_gc_stats_layout
+from components.analysis_backlog import get_demand_backlog_layout
 
-from components.toggle_switch import get_toggle
+from helpers import load_vb_dates, load_140_485_by_FY, load_140_stats, load_gc_stats
 
-from components.default_config import default_multiplication_factor
-
-def get_app_layout(app_name):
+def get_app_layout(app, app_name):
     '''
     define app layout
     ''' 
+
+    #load data
+    eb1_vb, eb2_vb, eb3_vb = load_vb_dates()
+    df_140_485 = load_140_485_by_FY()
+    df_140_details = load_140_stats()
+    df_gc = load_gc_stats()
 
     navbar = get_navbar(app_name)
 
     intro_layout = get_intro()
 
-    fig_vb_dates_layout = get_final_action_dates_figures()
+    fig_vb_dates_layout = get_final_action_dates_figures(app, 'FAD', eb1_vb, eb2_vb, eb3_vb)
 
-    overall_140_485_layout = get_overall_140_485_view()
+    overall_140_485_layout = get_overall_140_485_view(app, 'data_140_485', df_140_485)
 
-    stats_140_layout = get_140_stats()
+    stats_140_layout = get_140_stats(app, 'data_140', df_140_details)
 
-    gc_stats_layout = get_gc_stats_layout()
+    gc_stats_layout = get_gc_stats_layout(app, 'data_gc', df_gc)
 
-    #demand_backlog_layout = get_demand_backlog_layout()
-
-    multiplication_factor_layout = dbc.Row([
-      dbc.Col([
-        html.Div(f'{c}-EB{eb}'),
-        dcc.Input(
-                id=f'factor_{c}-{eb}',
-                type='number',
-                value = default_multiplication_factor[f'{c}-EB{eb}'],
-                placeholder= default_multiplication_factor[f'{c}-EB{eb}'],
-                step = 0.01, min = 0.5, max = 5.0, style={'maxWidth': '80px'}
-            )
-      ], sm=4) for c in ['China','India','Row'] for eb in [1,2,3]])
+    demand_backlog_layout = get_demand_backlog_layout(app, 'data_demand_backlog')
 
     return html.Div([
               navbar,
               intro_layout,
             #   tutorial_elements,
-            #   hidden_elements,
-              html.H4('Final Action Dates History',id='FAD'),
               fig_vb_dates_layout,
-              html.H4('140/485 Annual numbers Summary', id='data_140_485'),
               overall_140_485_layout,
-
-              html.H4('Historical 140 Statstics', id='data_140'),
               stats_140_layout,
-
-              html.H4('Historical Green Card Visa issued statistics', id = 'data_gc'),
               gc_stats_layout,
-              # html.P([
-              #   'Data source can be found in DOS Annual Reports ', 
-              #   html.A('Here', href='https://travel.state.gov/content/travel/en/legal/visa-law0/visa-statistics/annual-reports.html',target='_blank')
-              # ]),
-              # get_toggle('gc_stats_stack_toggle'),
-              # html.Div(id='gc_stats_div'),
-
-              html.H4('EB Green Card Demand and Backlog Anlysis', id='data_demand'),
-              html.P('''The green card demands are estimated based on 140 
-    approval numbers and the multiplication numbers. Please note that these 
-    numbers do not equal to the amount of pending 485/CP application. Instead, the numbers 
-    here equal to the "amount of green card demand who already has a PD.
-    '''),
-              html.Div('Please type in the [140:green card] multiplication factors'),
-              multiplication_factor_layout,
-              get_toggle('gc_demand_stack_toggle', False),
-              html.Div(id='demand_div')
+              demand_backlog_layout
+              # html.Div('Please type in the [140:green card] multiplication factors'),
+              # multiplication_factor_layout,
+              # get_toggle('gc_demand_stack_toggle', False),
+              # html.Div(id='demand_div')
             ], className="container-fluid")
 
 

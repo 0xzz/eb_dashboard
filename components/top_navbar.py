@@ -22,7 +22,7 @@ def get_navbar(app_name):
                     dbc.DropdownMenuItem(getHtmlA("140/485 Annual Data", "data_140_485")),
                     dbc.DropdownMenuItem(getHtmlA("140 Statistics", "data_140")),
                     dbc.DropdownMenuItem(getHtmlA("Visa Statistics", "data_gc")),
-                    dbc.DropdownMenuItem(getHtmlA("Demand & Backlog", "data_demand")),
+                    dbc.DropdownMenuItem(getHtmlA("Demand & Backlog", "data_demand_backlog")),
                     dbc.DropdownMenuItem(divider=True),
                     # dbc.DropdownMenuItem("When can I green?"),
                     # dbc.DropdownMenuItem("Tutorial"),

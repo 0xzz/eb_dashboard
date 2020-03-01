@@ -28,7 +28,7 @@ app.config.suppress_callback_exceptions = True
 
 set_app_callbacks(app, app_name)
 
-app.layout = get_app_layout(app_name)
+app.layout = get_app_layout(app, app_name)
 
 if __name__ == '__main__':
     app.run_server(debug=True, host="0.0.0.0")

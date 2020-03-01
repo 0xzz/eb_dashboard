@@ -26,20 +26,24 @@
 p {
   font-size: 1.4rem;
   padding: 1rem;
-  max-width: 80%;
+  max-width: 90%;
   border-color: #2196F3;
   border-left: 6px solid #2196F3;
   background-color: #ddffff;
-  color: #555;  
+  color: #555;
+  transition: 0.5s;
 }
 
 H4 {
-  margin-top: 2.5rem;
+  margin-top: 0.75rem;
   margin-bottom: .25rem;
   font-family: sans-serif;
   line-height: 1.2;  
 }
 
+.Section-Title {
+  margin-top: 2.5rem;
+}
 
 /* width */
 ::-webkit-scrollbar {

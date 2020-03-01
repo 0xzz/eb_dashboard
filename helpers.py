@@ -16,8 +16,8 @@ def load_vb_dates():
     df_eb2 = pd.read_csv('./data/eb2_final_action_days.csv')
     df_eb3 = pd.read_csv('./data/eb3_final_action_days.csv')
 
-    df = pd.merge(pd.merge(df_eb1, df_eb2, on='date'), df_eb3, on='date')
-    return df_eb1, df_eb2, df_eb3, df
+    # df = pd.merge(pd.merge(df_eb1, df_eb2, on='date'), df_eb3, on='date')
+    return df_eb1, df_eb2, df_eb3#, df
 
 def load_140_stats():
 

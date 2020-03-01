@@ -16,9 +16,9 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 
-from components.analysis_backlog import get_backlog
+from components.analysis_backlog import update_backlog_components
 # from components.data_140_stats import update_140_stats_figure_content
-from components.data_gc_stats import update_gc_stats_figure_content
+#from components.data_gc_stats import update_gc_stats_figure_content
 
 with open("tutorial_description.md", "r") as file:
     tutorial_description_md = file.read()
@@ -30,11 +30,29 @@ def set_app_callbacks(app, app_name):
     app.clientside_callback(
         ClientsideFunction(
             namespace='clientside',
-            function_name='update_140_stats_fig_stack_mode'
+            function_name='update_fig_stack_mode'
         ),
         Output('140_stats_fig', 'figure'),
         [Input('140_stats_figure_data', 'data'),
         Input('140_stats_stack_toggle', 'value')]
+    )
+    app.clientside_callback(
+        ClientsideFunction(
+            namespace='clientside',
+            function_name='toggle_stack_msg'
+        ),
+        Output('140_stats_stack_toggle_display', 'children'),
+        [Input('140_stats_stack_toggle', 'value')]
+    )
+
+    app.clientside_callback(
+        ClientsideFunction(
+            namespace='clientside',
+            function_name='update_fig_stack_mode'
+        ),
+        Output('data_gc_figure', 'figure'),
+        [Input('data_gc_figure_data', 'data'),
+        Input('gc_stats_stack_toggle', 'value')]
     )
 
     app.clientside_callback(
@@ -42,16 +60,27 @@ def set_app_callbacks(app, app_name):
             namespace='clientside',
             function_name='toggle_stack_msg'
         ),
-        Output('140_stats_stack_toggle_display','children'),
-        [Input('140_stats_stack_toggle', 'value')]
+        Output('gc_stats_stack_toggle_display', 'children'),
+        [Input('gc_stats_stack_toggle', 'value')]
     )
+
+    app.clientside_callback(
+        ClientsideFunction(
+            namespace='clientside',
+            function_name='update_fig_stack_mode'
+        ),
+        Output('gc_demand_figure', 'figure'),
+        [Input('gc_demand_figure_content', 'data'),
+        Input('gc_demand_stack_toggle', 'value')]
+    )
+    
     app.clientside_callback(
         ClientsideFunction(
             namespace='clientside',
             function_name='toggle_stack_msg'
         ),
-        Output('gc_stats_stack_toggle_display','children'),
-        [Input('gc_stats_stack_toggle', 'value')]
+        Output('gc_demand_stack_toggle_display', 'children'),
+        [Input('gc_demand_stack_toggle', 'value')]
     )
 
 
@@ -95,11 +124,12 @@ def set_app_callbacks(app, app_name):
             )
 
     @app.callback(
-        Output('demand_div', 'children'),
+        [Output('gc_demand_figure_content', 'data'),
+        Output('gc_demand_table_layout', 'children'),
+        Output('gc_backlogs_tabs', 'children')],        
         [Input(f'factor_{c}-{eb}', 'value') \
             for c in ['China', 'India', 'Row'] \
-            for eb in [1,2,3]] \
-        + [Input('gc_demand_stack_toggle','value')]
+            for eb in [1,2,3]]
     )
     def update_backlog_analysis(*arg):
         factors = {}
@@ -108,17 +138,35 @@ def set_app_callbacks(app, app_name):
             for eb in [1,2,3]:
                 factors[f'{c}-EB{eb}'] = arg[ind]
                 ind+=1
-        # print(factors)
-        isStack = arg[-1]
-        backlog_layout = get_backlog(factors, isStack)
-        return backlog_layout
+        demand_fig_content, demand_table, backlogs_tabs = update_backlog_components(factors)
+        return demand_fig_content, demand_table, backlogs_tabs
 
-    @app.callback(
-        Output('gc_stats_fig', 'figure'),
-        [Input('gc_stats_stack_toggle','value')]
-    )
-    def update_gc_analysis(isStack):
-        return update_gc_stats_figure_content(isStack)
+
+    # @app.callback(
+    #     Output('demand_div', 'children'),
+    #     [Input(f'factor_{c}-{eb}', 'value') \
+    #         for c in ['China', 'India', 'Row'] \
+    #         for eb in [1,2,3]] \
+    #     + [Input('gc_demand_stack_toggle','value')]
+    # )
+    # def update_backlog_analysis(*arg):
+    #     factors = {}
+    #     ind = 0
+    #     for c in ['China','India','Row']:
+    #         for eb in [1,2,3]:
+    #             factors[f'{c}-EB{eb}'] = arg[ind]
+    #             ind+=1
+    #     # print(factors)
+    #     isStack = arg[-1]
+    #     backlog_layout = get_backlog(factors, isStack)
+    #     return backlog_layout
+
+    # @app.callback(
+    #     Output('gc_stats_fig', 'figure'),
+    #     [Input('gc_stats_stack_toggle','value')]
+    # )
+    # def update_gc_analysis(isStack):
+    #     return update_gc_stats_figure_content(isStack)
 
 def is_button_clicked(ind, time_stamp_list):
     t0 = time_stamp_list[ind]
