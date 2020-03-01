@@ -57,12 +57,12 @@ class CustomIndexDash(dash.Dash):
 
         scripts = self._generate_scripts_html()
         css = self._generate_css_dist_html()
+        css = adsense_js + '\n' + css
         config = self._generate_config_html()
         metas = self._generate_meta_html()
         
         renderer = self._generate_renderer()
         title = getattr(self, "title", "Dash")
-        title += ('\n'+adsense_js)
 
         if self._favicon:
             favicon_mod_time = os.path.getmtime(

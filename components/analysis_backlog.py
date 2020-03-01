@@ -75,7 +75,7 @@ def get_backlog(multiplication_factor, isStack):
     tb485_backlog_layout = get_table(df485_backlog[[col for col in df485_backlog if 'backlog' in col or 'FY' in col]])
 
     demand_supply_fig_layout = get_demand_supply_fig(df485, df_visa, isStack)
-    backlog_fig_tabs = get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor)
+    backlog_fig_tabs_layout = get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor)
 
     #India. At end of FY2018, India EB2 reached to Mar 2009
     #       At end of FY2018, India EB3 reached to Jan 2009
@@ -101,9 +101,7 @@ def get_backlog(multiplication_factor, isStack):
             html.Div('  6. For India EB2 & EB3, we assume that at the end of FY 2018, all backlogs before FY2009 and 50% of 2009 demands were cleared. This is because Inida EB2/3 moved to Mar 2009 and Jan 2009 at the end of FY 2019, respectively.')
         ]),
         html.H6('EB123 Green Card Backlog Estimation by Country by FY'),
-        dcc.Tabs(
-            backlog_fig_tabs + [dcc.Tab(tb485_backlog_layout,label="View Table")]
-        )
+        dcc.Tabs(backlog_fig_tabs_layout + [dcc.Tab(tb485_backlog_layout,label="View Table")])
     ])
 
 def get_demand_supply_fig(df485, df_visa, isStack):
@@ -158,8 +156,8 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
         df485[f'{c}-EB23'] = df485[f'{c}-EB2'] +df485[f'{c}-EB3'] 
         df_visa[f'{c}-EB23'] = df_visa[f'{c}-EB2'] +df_visa[f'{c}-EB3'] 
         df485_backlog[f'{c}-EB23-backlog'] = df485_backlog[f'{c}-EB2-backlog'] +df485_backlog[f'{c}-EB3-backlog'] 
-    for c in ['China','India','Row']:
-        for eb in [1,23]:
+    for eb in [1,23]:
+        for c in ['China','India','Row']:
             col = f'{c}-EB{eb}'
             # print(df485[col], df_visa[col], df485_backlog[f'{col}-backlog'])
 
@@ -200,6 +198,6 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
                 config=default_config,
                 style={'margin':'1rem'}
             )
-            fig_tabs.append(dcc.Tab(fig_layout,label=f'{c}-EB{eb}'))
+            fig_tabs.append(dcc.Tab([fig_layout],label = f'{c}-EB{eb}'))
 
     return fig_tabs

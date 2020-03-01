@@ -1,25 +1,24 @@
-from dash.dependencies import Output, Input, State
-import dash_core_components as dcc
-import dash_html_components as html
-
-import flask, base64, hashlib
-from flask import send_file
-
 import datetime
 from io import BytesIO
 import pickle
 import time
 import base64
+import os
 
 import pandas as pd
 import numpy as np
 
-import os
-import glob
+import flask, base64, hashlib
+from flask import send_file
+
+from dash.dependencies import Output, Input, State, ClientsideFunction
+import dash_core_components as dcc
+import dash_html_components as html
+
 
 from components.analysis_backlog import get_backlog
-from components.data_140_stats import get_140_stats
-from components.data_gc_stats import get_gc_stats
+# from components.data_140_stats import update_140_stats_figure_content
+from components.data_gc_stats import update_gc_stats_figure_content
 
 with open("tutorial_description.md", "r") as file:
     tutorial_description_md = file.read()
@@ -28,14 +27,25 @@ into_description_md = ''
 
 def set_app_callbacks(app, app_name):
 
-    # app.clientside_callback(
-    #     ClientsideFunction(
-    #         namespace='clientside',
-    #         function_name='display'
-    #     ),
-    #     Output('contact-us-modal', 'children'),
-    #     [Input('contact_us', 'n_clicks')]
-    # )
+    app.clientside_callback(
+        ClientsideFunction(
+            namespace='clientside',
+            function_name='update_140_stats_fig_stack_mode'
+        ),
+        Output('140_stats_fig', 'figure'),
+        [Input('140_stats_figure_data', 'data'),
+        Input('140_stats_stack_toggle', 'value')]
+    )
+
+    app.clientside_callback(
+        ClientsideFunction(
+            namespace='clientside',
+            function_name='toggle_stack_msg'
+        ),
+        Output('140_stats_stack_toggle_display','children'),
+        [Input('140_stats_stack_toggle', 'value')]
+    )
+
 
     @app.callback(
         Output("contact-us-modal", "is_open"),
@@ -96,19 +106,23 @@ def set_app_callbacks(app, app_name):
         return backlog_layout
 
 
-    @app.callback(
-        Output('140_stats_div', 'children'),
-        [Input('140_stats_stack_toggle','value')]
-    )
-    def update_140_analysis(isStack):
-        return get_140_stats(isStack)
+    # @app.callback(
+    #     [Output('140_stats_fig', 'figure'),
+    #      Output('140_stats_stack_toggle_display','children')],
+    #     [Input('140_stats_stack_toggle','value')]
+    # )
+    # def update_140_stats_figure(isStack):
+    #     return update_140_stats_figure_content(isStack),\
+    #            'Switch to Group Mode' if isStack else 'Switch to Stack Mode'
 
     @app.callback(
-        Output('gc_stats_div', 'children'),
+        [Output('gc_stats_fig', 'figure'),
+         Output('gc_stats_stack_toggle_display','children')],
         [Input('gc_stats_stack_toggle','value')]
     )
     def update_gc_analysis(isStack):
-        return get_gc_stats(isStack)
+        return update_gc_stats_figure_content(isStack),\
+               'Switch to Group Mode' if isStack else 'Switch to Stack Mode'
 
 def is_button_clicked(ind, time_stamp_list):
     t0 = time_stamp_list[ind]

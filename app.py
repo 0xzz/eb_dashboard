@@ -13,25 +13,19 @@ from resources import external_scripts, external_stylesheets, meta_tags
 
 from EbDashClass import CustomIndexDash
 
-app = CustomIndexDash('EB Information',
-		            external_scripts = [
-                  dbc.themes.BOOTSTRAP],
-                  # {
-                  #   'href': 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js',
-                  #   'crossorgin': 'anonymous',
-                  #   'data-ad-client': 'ca-pub-4691708742212768'
-                  # }],
-                  #external_stylesheets = external_stylesheets,
-                # meta_tags = meta_tags,
-               )
-app.title = 'EB Information'
+app_name = 'EB Stats'
 
+app = CustomIndexDash(app_name,
+		            external_scripts = [
+                  dbc.themes.BOOTSTRAP] + external_stylesheets,
+                meta_tags = meta_tags,
+               )
+app.title = app_name
 
 server = app.server
 
 app.config.suppress_callback_exceptions = True
 
-app_name = 'EB Stats'
 set_app_callbacks(app, app_name)
 
 app.layout = get_app_layout(app_name)

@@ -8,6 +8,9 @@ from components.top_navbar import get_navbar
 from components.intro import get_intro
 from components.vb_dates import get_final_action_dates_figures
 from components.data_140_485 import get_overall_140_485_view
+from components.data_140_stats import get_140_stats
+from components.data_gc_stats import get_gc_stats_layout
+
 from components.toggle_switch import get_toggle
 
 from components.default_config import default_multiplication_factor
@@ -24,6 +27,12 @@ def get_app_layout(app_name):
     fig_vb_dates_layout = get_final_action_dates_figures()
 
     overall_140_485_layout = get_overall_140_485_view()
+
+    stats_140_layout = get_140_stats()
+
+    gc_stats_layout = get_gc_stats_layout()
+
+    #demand_backlog_layout = get_demand_backlog_layout()
 
     multiplication_factor_layout = dbc.Row([
       dbc.Col([
@@ -48,27 +57,16 @@ def get_app_layout(app_name):
               overall_140_485_layout,
 
               html.H4('Historical 140 Statstics', id='data_140'),
-              html.P([
-                html.Div([
-                  'Data source at USCIS ', 
-                  html.A('here', href='https://www.uscis.gov/sites/default/files/USCIS/Resources/Reports%20and%20Studies/Immigration%20Forms%20Data/Employment-based/I140_by_class_country_FY09_19.pdf', target='_blank')
-                ]),
-                html.Div('''Please note that the approved numbers of FY2019 have been 
-corrected using the pending numbers and 2019 denial rate. The safe EB 140 thresholds
-are computed using 40k divided by the corresponding global EB123 multiplication 
-factors: 2.4, 2.0, and 2.1, respectively.
-'''),
-              ]),
-              get_toggle('140_stats_stack_toggle'),
-              html.Div(id='140_stats_div'),
+              stats_140_layout,
 
               html.H4('Historical Green Card Visa issued statistics', id = 'data_gc'),
-              html.P([
-                'Data source can be found in DOS Annual Reports ', 
-                html.A('Here', href='https://travel.state.gov/content/travel/en/legal/visa-law0/visa-statistics/annual-reports.html',target='_blank')
-              ]),
-              get_toggle('gc_stats_stack_toggle'),
-              html.Div(id='gc_stats_div'),
+              gc_stats_layout,
+              # html.P([
+              #   'Data source can be found in DOS Annual Reports ', 
+              #   html.A('Here', href='https://travel.state.gov/content/travel/en/legal/visa-law0/visa-statistics/annual-reports.html',target='_blank')
+              # ]),
+              # get_toggle('gc_stats_stack_toggle'),
+              # html.Div(id='gc_stats_div'),
 
               html.H4('EB Green Card Demand and Backlog Anlysis', id='data_demand'),
               html.P('''The green card demands are estimated based on 140 
