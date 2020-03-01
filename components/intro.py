@@ -20,4 +20,8 @@ def get_intro():
         # html.A('美国华人网华人闲话聊天群  ', href='https://t.me/joinchat/PyOzTUgC1gIlw2AjmuiqTQ',className='external_links',target='_blank'),
         # html.A('美国华人抗冠状病毒群', href='https://t.me/FightSARI',className='external_links',target='_blank'),
         # html.A('加拿大抗肺炎病毒群  ', href='https://t.me/joinchat/QOAsG1NKlAVZhCca6UzMvA',className='external_links',target='_blank'),
+        html.P(''' Please note that Some figures might not be displayed properly on small screens. 
+If you have some difficulties in viewing all the content of some figures, please swith your browser to desktop mode. 
+Sorry for the inconvenience.
+''')
     ])

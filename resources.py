@@ -33,6 +33,6 @@ external_stylesheets = [
 meta_tags = [
               {'charset':'UTF-8'},
               {'http-equiv':"X-UA-Compatible", 'conent':"IE=edge"},
-              {'name': 'viewport', 'content':  "width=device-width, initial-scale=1, shrink-to-fit=no"}
-             ]
+              {'name': 'viewport', 'content':  "width=750, initial-scale=1.0, shrink-to-fit=yes"}
+             ]#device-width
 
