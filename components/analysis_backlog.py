@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from scipy import interpolate
 import datetime
 
 import dash_html_components as html
@@ -15,43 +16,20 @@ from helpers import load_140_stats, load_gc_stats
 
 def get_demand_backlog_layout(app, id):
 
-    info_component1 = html.Div([
-        html.Div('''The green card demandsand backlogs are estimated based on 140 
-approval numbers and the multiplication numbers. Please note that these 
-numbers do not equal to the amount of pending 485/CP application. Instead, the numbers 
-here equal to the "amount of green card demand who already has a PD.'''),
-        html.Div('''请注意，这里的[140:GC]系数不是通常所说的家属系数，这里的[140:GC]系数是指平均每份approve
-的140最终会带来多少张绿卡的需求. 通常情况下，[140:GC]=家属系数+1. 具体到个人，如果你有一份140，最后一共申请2张绿卡，
-那么你个人的[140:GC]系数就是2.0. 如果你有2份140，最后只需要一张绿卡，那么你的[140:GC]系数就是0.5. 如果你有1份140, 
-最后选择了回国放弃绿卡, 那么你的[140:GC]=0. 经过网友的测算，我们认为中国平均下来，EB1的[140:GC]系数大约在2.0左右(
-我们这里取了默认值1.98), 而EB23的[140:GC]系数大约在1.3-1.6之间, 并且由于NIW比例上升, 这个数字处于上升阶段. 我们
-这里取了默认值1.35. 如果您不认可这些数字，请输入您自己认为或者测算出来的数字，下面的demand和backlog图表会自动做出修正.''')
-    ])
+    with open("docs/demand.md", "rb") as file:
+        demand_faq_md = file.read().decode('utf8')
+    info_component1 = dcc.Markdown(demand_faq_md)
     info_button1, info_section1 = get_local_info_component(app, id, info_component1)
 
-    info_component2 = html.Ul([
-            html.Li('Note: Please note that the backlog here referes to the green card demands (regardless on if the petitioner has submitted 485 or not) that already have a PD. If a person already has an approved 140, we asume he/she brings or will bring [1*multiplication factor] number of green card demand.'),
-            html.Li('      The backlog analysis will help you understand how many people are in front of you in the long waiting queue. Based on simple computation, you can esitmate how long you would need to wait to get a green card.'),
-            html.Li('Disclaimer: We take no legal responsibility for the accuracy of the following backlog analysis.', style={'font-weight': 'bold'}),
-            html.Li([html.Div('Assumptions', style={'font-weight': 'bold'}),
-                html.Ul([
-                    html.Li('  1. The backlogs are estimated based on a simple demand-supply model plus an initial offset. The initial offset are estimated using historical visa bulletins.'),
-                    html.Li('  2. The green card demands are estimated based on the 140-GreeCard multiplication factors typed in the above 3x3 input grid.'),
-                    html.Li('  3. Because EB2 PERM and EB3 PERM can relatively easily downgrade/upgrade, we have combined the backlog of EB2 and EB3 when plotting.'),
-                    html.Li('  3. For EB1, we assume that at the end of FY 2013, all backlogs before 2013 and 60% of 2013 demand had been satisfied for all countries.'),
-                    html.Li('  4. For China EB2 & EB3, we assume that at the end of FY2019, all backlogs before 2015 has been cleared and 80% of 2015 demands have been satisfied. This is because the VB for China-EB2 and 3 were at June and Nov 2015 at the end of FY2019.'),
-                    html.Li('  5. For Row EB2 & EB3, we assume that at the end of FY 2018, all backlogs before 2017 and 75% of 2017 demands had been satisfied. This is because the VBs for ROW EB2/3 were current at that time.'),
-                    html.Li('  6. For India EB2 & EB3, we assume that at the end of FY 2018, all backlogs before FY2009 and 50% of 2009 demands were cleared. This is because Inida EB2/3 moved to Mar 2009 and Jan 2009 at the end of FY 2019, respectively.')
-                ])
-            ]),
-            html.Li('''如何理解下图中的backlog? 如果你的pd是2018年2月1日, 那么可从下图中读出该pd对应的backlog数字. 这个数字是在你file 140的时候，pd在你之前的还没有绿的绿卡总需求. 这个数字除以每年
-中国可以拿到的该类别的绿卡数字，差不多就是你需要等待的全部时间. 在具体计算的时候，由于pd和发绿卡的非线性(比如EB1在2017年5月和2018年3月有集中申请，再比如排期经常会出现倒退情况导致发绿卡
-并不是严格按月平均的), 这个backlog/annual supply的估计很可能会有+/-1年的误差. 特此声明. '''),
-            html.Li(''' 由于EB2和EB3 PERM之间可以比较容易的升降级, 历史上中国和row都大量存在这个情况, 在计算backlog的时候我们把eb23合并了. '''),
-            html.Li(''' 动态计算绿卡等待时间的功能会很快上线. '''),
-            
-        ])
+    with open("docs/backlog.md", "rb") as file:
+        backlog_faq_md = file.read().decode('utf8')
+    info_component2 = dcc.Markdown(backlog_faq_md)
     info_button2, info_section2 = get_local_info_component(app, id+'-backlog', info_component2)
+
+    with open("docs/prediction.md", "rb") as file:
+        prediction_faq_md = file.read().decode('utf8')
+    info_component3 = dcc.Markdown(prediction_faq_md)
+    info_button3, info_section3 = get_local_info_component(app, id+'-prediction', info_component3)
 
     multiplication_factor_layout = dbc.Row([
       dbc.Col([
@@ -94,7 +72,48 @@ here equal to the "amount of green card demand who already has a PD.'''),
             info_button2
         ], className='Section-Title'),
         info_section2,
-        dcc.Tabs(id='gc_backlogs_tabs')
+        dcc.Tabs(id='gc_backlogs_tabs'),
+        dcc.Store(id='gc_backlogs_data', data = {}),
+        dbc.Row([
+            html.H6('Estimate Your Waiting Time'),
+            info_button3
+        ], className='Section-Title'),
+        info_section3,
+        dbc.Row([
+            dbc.Col([
+                html.Div('Select your EB category', style={'margin': '5px'}),
+                dcc.Dropdown(
+                    id='user-eb-type',
+                    options=[
+                        {'label': 'China-EB1', 'value': 'China-EB1'},
+                        {'label': 'China-EB23', 'value': 'China-EB23'},
+                    ],
+                    value='China-EB1',
+                    style={'width': '150px'}
+                )
+            ]),
+            dbc.Col([
+                html.Div('Type in your priority date', style={'margin': '5px'}),
+                dcc.DatePickerSingle(
+                    id='pd-picker',
+                    min_date_allowed=datetime.datetime(2017,6,2),
+                    max_date_allowed=datetime.datetime(2020,9,30),
+                    initial_visible_month=datetime.datetime(2018,2,1),
+                    date=str(datetime.datetime(2018, 2, 1, 23, 59, 59))
+                )
+            ]),
+            dbc.Col([
+                html.Div(id='future-annual-supply-info-div', style={'margin': '5px'}),
+                dcc.Input(
+                    id=f'future-annual-supply',
+                    type='number',
+                    value = 3000,
+                    placeholder= 3000,
+                    step = 100, min = 0, max = 20000, style={'maxWidth': '80px'}
+                )
+            ])
+        ]),
+        html.Div(id='wait-time-estimation')
     ])
 
 def update_backlog_components(multiplication_factor):
@@ -108,11 +127,12 @@ def update_backlog_components(multiplication_factor):
     demand_supply_fig_content = get_demand_supply_fig_content(df485, df_visa)
     tb485_layout = get_table(df485)
     
-    backlog_fig_tabs = get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor)
+    backlog_fig_tabs, backlog_dict = get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor)
     tb485_backlog_layout = get_table(df485_backlog[[col for col in df485_backlog if 'backlog' in col or 'FY' in col]])
 
     return demand_supply_fig_content, tb485_layout, \
-        backlog_fig_tabs+[dcc.Tab(tb485_backlog_layout, label='View Table')]
+        backlog_fig_tabs+[dcc.Tab(tb485_backlog_layout, label='View Table')],\
+        backlog_dict
 
 def get_demand_supply_fig_content(df485, df_visa):
 
@@ -213,12 +233,13 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
 
     def get_interp_backlog(x0, y0):
         x0 = x0 +1
-        x1 = np.linspace(x0[0],x0[-1],(x0[-1]-x0[0])*12+1)
-        y1 = np.rint(np.interp(x1, x0, y0))
+        x1 = np.linspace(x0[0],x0[-1]+1,(1+x0[-1]-x0[0])*12+1)
+        f = interpolate.interp1d(x0,y0, fill_value='extrapolate')
+        y1 = f(x1)
+        y1 = np.array(np.rint(y1), dtype=np.int)
         yr = np.array(x1-3.0/12.0, dtype=np.int)
         mm = (np.arange(x1.size)+9) % 12 + 1
         textdata = [f'{mm}/01/{yr}' for yr, mm in zip(yr, mm)]
-        #textdata = [datetime.datetime(yr,mm,1) for yr, mm in zip(yr, mm)]
         return x1, y1, textdata
         
     x = np.array(list(range(2009,2020)))
@@ -226,13 +247,18 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
     for c in ['China','India','Row']:
         df485[f'{c}-EB23'] = df485[f'{c}-EB2'] +df485[f'{c}-EB3'] 
         df_visa[f'{c}-EB23'] = df_visa[f'{c}-EB2'] +df_visa[f'{c}-EB3'] 
-        df485_backlog[f'{c}-EB23-backlog'] = df485_backlog[f'{c}-EB2-backlog'] +df485_backlog[f'{c}-EB3-backlog'] 
+        df485_backlog[f'{c}-EB23-backlog'] = df485_backlog[f'{c}-EB2-backlog'] +df485_backlog[f'{c}-EB3-backlog']
+    
+    backlog_dict = {}
     for eb in [1,23]:
         for c in ['China','India','Row']:
             col = f'{c}-EB{eb}'
             # print(df485[col], df_visa[col], df485_backlog[f'{col}-backlog'])
 
             x_backlog, y_backlog, textdata_backlog = get_interp_backlog(x, df485_backlog[f'{col}-backlog'].values)
+            backlog_dict['date'] = textdata_backlog[63:]
+            backlog_dict[col] = y_backlog.tolist()[63:]
+
             fig_data = [
                 {'x': x+0.49, 'y': df485[col].values, 'type': 'bar','name':f'{c}-EB{eb} Demand', 'marker':{'color':'#EE4444'},
                         'hovertemplate':'FY%{x:.0f}<br>add %{y}'},
@@ -254,7 +280,7 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
                 figure={
                     'data': fig_data,
                     'layout': {
-                        # 'hovermode':'closest',
+                        'hovermode':'closest',
                         'title': f'{c}-EB{eb} Backlog {mf_msg}',
                         'font': {
                             'size': '0.85rem'
@@ -277,4 +303,34 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
             )
             fig_tabs.append(dcc.Tab([fig_layout],label = f'{c}-EB{eb}'))
 
-    return fig_tabs
+    return fig_tabs, backlog_dict
+
+
+def estimate_wait_time(eb_type, pd, future_supply, backlog_dict):
+
+    def get_backlog_before(eb_type, pd, backlog_dict):
+        pd = datetime.datetime.strptime(pd, '%Y-%m-%d').timestamp()
+        all_pd = [datetime.datetime.strptime(p, '%m/%d/%Y').timestamp() for p in backlog_dict['date']]
+        all_back = backlog_dict[eb_type]
+        b = np.interp(pd, all_pd, all_back)
+        return int(b)
+
+    if('date' not in backlog_dict or future_supply<=0):
+        return ''
+
+    bl = get_backlog_before(eb_type, pd, backlog_dict)
+
+    wait_time = bl/future_supply
+    wy = int(wait_time)
+    wm = int(np.round((wait_time - wy)*12.0))
+
+    msg = f'''
+There are {bl} total of {eb_type} green card demands in front of your PD {pd} at the date you filed your case.
+
+Based on an anually supply of {future_supply}, your total waiting time is around {wy} year {wm} months.
+    '''
+
+    return dcc.Markdown(msg)
+#    if(eb_type=='China-EB1'):
+
+

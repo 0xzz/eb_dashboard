@@ -1,7 +1,7 @@
 import datetime
 from io import BytesIO
+import json
 import pickle
-import time
 import base64
 import os
 
@@ -15,10 +15,7 @@ from dash.dependencies import Output, Input, State, ClientsideFunction
 import dash_core_components as dcc
 import dash_html_components as html
 
-
-from components.analysis_backlog import update_backlog_components
-# from components.data_140_stats import update_140_stats_figure_content
-#from components.data_gc_stats import update_gc_stats_figure_content
+from components.analysis_backlog import update_backlog_components, estimate_wait_time
 
 with open("tutorial_description.md", "r") as file:
     tutorial_description_md = file.read()
@@ -94,39 +91,11 @@ def set_app_callbacks(app, app_name):
             return not is_open
         return is_open
         
-    # Callback function for the learn-more button
-    @app.callback(
-        [Output("description-text", "children"),
-         Output("learn-more-button", "children")],
-        [Input("learn-more-button", "n_clicks")],
-    )
-    def learn_more(n_clicks):
-        # If clicked odd times, the instructions will show; else (even times), only the header will show
-        if n_clicks == None:
-            n_clicks = 0
-        if (n_clicks % 2) == 1:
-            n_clicks += 1
-            return (
-                html.Div(
-                    style={"padding-right": "15%"},
-                    children=[dcc.Markdown(tutorial_description_md)],
-                ),
-                "Close Tutorial",
-            )
-        else:
-            n_clicks += 1
-            return (
-                html.Div(
-                    style={"padding-right": "15%"},
-                    children=[dcc.Markdown(into_description_md)],
-                ),
-                "Tutorial",
-            )
-
     @app.callback(
         [Output('gc_demand_figure_content', 'data'),
         Output('gc_demand_table_layout', 'children'),
-        Output('gc_backlogs_tabs', 'children')],        
+        Output('gc_backlogs_tabs', 'children'),
+        Output('gc_backlogs_data', 'data')],        
         [Input(f'factor_{c}-{eb}', 'value') \
             for c in ['China', 'India', 'Row'] \
             for eb in [1,2,3]]
@@ -138,9 +107,37 @@ def set_app_callbacks(app, app_name):
             for eb in [1,2,3]:
                 factors[f'{c}-EB{eb}'] = arg[ind]
                 ind+=1
-        demand_fig_content, demand_table, backlogs_tabs = update_backlog_components(factors)
-        return demand_fig_content, demand_table, backlogs_tabs
+        demand_fig_content, demand_table, backlogs_tabs, backlog_dict = update_backlog_components(factors)
+        with open('backlog.json','w') as f:
+            json.dump(backlog_dict, f)
 
+        return demand_fig_content, demand_table, backlogs_tabs, backlog_dict
+
+    @app.callback(
+        [Output('pd-picker','min_date_allowed'),
+        Output('future-annual-supply-info-div','children'),
+        Output('future-annual-supply','value')],
+        [Input('user-eb-type','value')]
+    )
+    def update_pd_related_defaults(eb_type):
+        info_msg = f'Ave Annual Supply for {eb_type}'
+        min_pd_date = datetime.datetime(2017,6,2)
+        annual_supply = 3000
+        if(eb_type=='China-EB23'):
+            min_pd_date = datetime.datetime(2015,8,1)
+            annual_supply = 6000
+        return min_pd_date, info_msg, annual_supply
+
+    @app.callback(
+        Output('wait-time-estimation','children'),
+        [Input('user-eb-type','value'),
+        Input('pd-picker','date'),
+        Input('future-annual-supply','value'),
+        Input('gc_backlogs_data', 'data')]
+    )
+    def call_estimate_wait_time( eb_type, pd, future_supply, backlog_dict):
+        pd = pd.split(' ')[0]
+        return estimate_wait_time(eb_type, pd, future_supply, backlog_dict)
 
     # @app.callback(
     #     Output('demand_div', 'children'),
