@@ -108,8 +108,8 @@ def set_app_callbacks(app, app_name):
                 factors[f'{c}-EB{eb}'] = arg[ind]
                 ind+=1
         demand_fig_content, demand_table, backlogs_tabs, backlog_dict = update_backlog_components(factors)
-        with open('backlog.json','w') as f:
-            json.dump(backlog_dict, f)
+        # with open('backlog.json','w') as f:
+        #     json.dump(backlog_dict, f)
 
         return demand_fig_content, demand_table, backlogs_tabs, backlog_dict
 
