@@ -15,11 +15,18 @@ from helpers import load_140_stats, load_gc_stats
 
 def get_demand_backlog_layout(app, id):
 
-    info_component1 = html.Div('''The green card demandsand backlogs are estimated based on 140 
-    approval numbers and the multiplication numbers. Please note that these 
-    numbers do not equal to the amount of pending 485/CP application. Instead, the numbers 
-    here equal to the "amount of green card demand who already has a PD". 
-    ''')
+    info_component1 = html.Div([
+        html.Div('''The green card demandsand backlogs are estimated based on 140 
+approval numbers and the multiplication numbers. Please note that these 
+numbers do not equal to the amount of pending 485/CP application. Instead, the numbers 
+here equal to the "amount of green card demand who already has a PD.'''),
+        html.Div('''请注意，这里的[140:GC]系数不是通常所说的家属系数，这里的[140:GC]系数是指平均每份approve
+的140最终会带来多少张绿卡的需求. 通常情况下，[140:GC]=家属系数+1. 具体到个人，如果你有一份140，最后一共申请2张绿卡，
+那么你个人的[140:GC]系数就是2.0. 如果你有2份140，最后只需要一张绿卡，那么你的[140:GC]系数就是0.5. 如果你有1份140, 
+最后选择了回国放弃绿卡, 那么你的[140:GC]=0. 经过网友的测算，我们认为中国平均下来，EB1的[140:GC]系数大约在2.0左右(
+我们这里取了默认值1.98), 而EB23的[140:GC]系数大约在1.3-1.6之间, 并且由于NIW比例上升, 这个数字处于上升阶段. 我们
+这里取了默认值1.35. 如果您不认可这些数字，请输入您自己认为或者测算出来的数字，下面的demand和backlog图表会自动做出修正.''')
+    ])
     info_button1, info_section1 = get_local_info_component(app, id, info_component1)
 
     info_component2 = html.Ul([
@@ -36,7 +43,13 @@ def get_demand_backlog_layout(app, id):
                     html.Li('  5. For Row EB2 & EB3, we assume that at the end of FY 2018, all backlogs before 2017 and 75% of 2017 demands had been satisfied. This is because the VBs for ROW EB2/3 were current at that time.'),
                     html.Li('  6. For India EB2 & EB3, we assume that at the end of FY 2018, all backlogs before FY2009 and 50% of 2009 demands were cleared. This is because Inida EB2/3 moved to Mar 2009 and Jan 2009 at the end of FY 2019, respectively.')
                 ])
-            ])
+            ]),
+            html.Li('''如何理解下图中的backlog? 如果你的pd是2018年2月1日, 那么可从下图中读出该pd对应的backlog数字. 这个数字是在你file 140的时候，pd在你之前的还没有绿的绿卡总需求. 这个数字除以每年
+中国可以拿到的该类别的绿卡数字，差不多就是你需要等待的全部时间. 在具体计算的时候，由于pd和发绿卡的非线性(比如EB1在2017年5月和2018年3月有集中申请，再比如排期经常会出现倒退情况导致发绿卡
+并不是严格按月平均的), 这个backlog/annual supply的估计很可能会有+/-1年的误差. 特此声明. '''),
+            html.Li(''' 由于EB2和EB3 PERM之间可以比较容易的升降级, 历史上中国和row都大量存在这个情况, 在计算backlog的时候我们把eb23合并了. '''),
+            html.Li(''' 动态计算绿卡等待时间的功能会很快上线. '''),
+            
         ])
     info_button2, info_section2 = get_local_info_component(app, id+'-backlog', info_component2)
 
@@ -197,6 +210,17 @@ def compute_backlog(df485, df_visa):
 
 
 def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
+
+    def get_interp_backlog(x0, y0):
+        x0 = x0 +1
+        x1 = np.linspace(x0[0],x0[-1],(x0[-1]-x0[0])*12+1)
+        y1 = np.rint(np.interp(x1, x0, y0))
+        yr = np.array(x1-3.0/12.0, dtype=np.int)
+        mm = (np.arange(x1.size)+9) % 12 + 1
+        textdata = [f'{mm}/01/{yr}' for yr, mm in zip(yr, mm)]
+        #textdata = [datetime.datetime(yr,mm,1) for yr, mm in zip(yr, mm)]
+        return x1, y1, textdata
+        
     x = np.array(list(range(2009,2020)))
     fig_tabs = []
     for c in ['China','India','Row']:
@@ -208,13 +232,15 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
             col = f'{c}-EB{eb}'
             # print(df485[col], df_visa[col], df485_backlog[f'{col}-backlog'])
 
+            x_backlog, y_backlog, textdata_backlog = get_interp_backlog(x, df485_backlog[f'{col}-backlog'].values)
             fig_data = [
                 {'x': x+0.49, 'y': df485[col].values, 'type': 'bar','name':f'{c}-EB{eb} Demand', 'marker':{'color':'#EE4444'},
-                        'hoverinfo':'x+y','hovertemplate':'FY%{x:.0f}<br>add %{y}'},
+                        'hovertemplate':'FY%{x:.0f}<br>add %{y}'},
                 {'x': x+0.49, 'y': -df_visa[col].values, 'base': 0, 'type': 'bar','name':f'{c}-EB{eb} Issued', 'marker':{'color':'#44EE44'},
-                        'hoverinfo':'x+y','hovertemplate':'FY%{x:.0f}<br>clear %{y}'},
-                {'x': x+1.0, 'y': df485_backlog[f'{col}-backlog'].values, 'type': 'lines','name':f'{c}-EB{eb} backlog','marker':{'color':'black'},
-                        'hoverinfo':'x+y','hovertemplate':'At Begining of FY%{x:.0f}<br>Total Backlog: %{y}'}
+                        'hovertemplate':'FY%{x:.0f}<br>clear %{y}'},
+                {'x': x_backlog, 'y': y_backlog, 'type': 'lines','name':f'{c}-EB{eb} backlog','marker':{'color':'black'},
+                        'mode':'lines+markers','text': textdata_backlog,
+                        'hovertemplate':'Total Backlog: %{y}<br>At %{text}'}
             ]
 
             if(eb==1):
