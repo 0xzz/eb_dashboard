@@ -132,6 +132,18 @@ def set_app_callbacks(app, app_name):
         if(eb_type=='China-EB23'):
             min_pd_date = datetime.datetime(2015,8,1)
             annual_supply = 6000
+        elif (eb_type=='India-EB1'):
+            min_pd_date = datetime.datetime(2015,3,1)
+        elif (eb_type=='India-EB23'):
+            min_pd_date = datetime.datetime(2009,1,1)
+            annual_supply = 6000
+        elif (eb_type=='Row-EB1'):
+            min_pd_date = datetime.datetime(2019,3,1)
+            annual_supply = 32000
+        elif (eb_type=='Row-EB23'):
+            min_pd_date = datetime.datetime(2017,1,1)
+            annual_supply = 64000
+
         return min_pd_date, info_msg, annual_supply, mf_msg
 
     @app.callback(

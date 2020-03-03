@@ -85,8 +85,8 @@ def get_demand_backlog_layout(app, id):
                 dcc.Dropdown(
                     id='user-eb-type',
                     options=[
-                        {'label': 'China-EB1', 'value': 'China-EB1'},
-                        {'label': 'China-EB23', 'value': 'China-EB23'},
+                        {'label': f'{c}-EB{eb}', 'value': f'{c}-EB{eb}'} 
+                        for c in ['China', 'India','Row'] for eb in [1,23]
                     ],
                     value='China-EB1',
                     style={'width': '150px'}
@@ -113,7 +113,7 @@ def get_demand_backlog_layout(app, id):
                     type='number',
                     value = 3000,
                     placeholder= 3000,
-                    step = 10, min = 0, max = 20000, style={'maxWidth': '80px'}
+                    step = 10, min = 0, max = 140000, style={'maxWidth': '80px'}
                 )
             ]),            
             dbc.Col([
@@ -123,7 +123,7 @@ def get_demand_backlog_layout(app, id):
                     type='number',
                     value = 0,
                     placeholder= 0,
-                    step = 1, min = 0, max = 10000, style={'maxWidth': '80px'}
+                    step = 1, min = 0, max = 140000, style={'maxWidth': '80px'}
                 )
             ])
         ]),
@@ -229,13 +229,13 @@ def compute_backlog(df485, df_visa):
     df485_backlog['Row-EB3-backlog'] = df485_backlog['Row-EB3-backlog'] - df485_backlog['Row-EB3-backlog'].iloc[8] + \
                                         df485['Row-EB3'].iloc[8]*0.5
 
-    #India. At end of FY2018, India EB2 reached to Mar 2009
-    #       At end of FY2018, India EB3 reached to Jan 2009
-    #Assuming that, at the end of FY2018, all backlog before 2009 and half of the demand in 2009 have been satisfied
-    df485_backlog['India-EB2-backlog'] = df485_backlog['India-EB2-backlog'] - df485_backlog['India-EB2-backlog'].iloc[-2] + \
-                                        df485['Row-EB2'].iloc[0]*0.5 + df485['Row-EB2'].iloc[1:].sum()
-    df485_backlog['India-EB3-backlog'] = df485_backlog['India-EB3-backlog'] - df485_backlog['India-EB3-backlog'].iloc[-2] + \
-                                        df485['Row-EB3'].iloc[0]*0.5 + df485['Row-EB3'].iloc[1:].sum()
+    #India. At end of FY2019, India EB2 reached to May 2009
+    #       At end of FY2019, India EB3 reached to July 2009
+    #Assuming that, at the end of FY2019, all backlog before 2009 and 75% of the demand in 2009 have been satisfied
+    df485_backlog['India-EB2-backlog'] = df485_backlog['India-EB2-backlog'] - df485_backlog['India-EB2-backlog'].iloc[-1] + \
+                                        df485['India-EB2'].iloc[0]*0.25 + df485['India-EB2'].iloc[1:].sum()
+    df485_backlog['India-EB3-backlog'] = df485_backlog['India-EB3-backlog'] - df485_backlog['India-EB3-backlog'].iloc[-1] + \
+                                        df485['India-EB3'].iloc[0]*0.25 + df485['India-EB3'].iloc[1:].sum()
 
     df485_backlog = df485_backlog.round().astype(int)
 
