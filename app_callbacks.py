@@ -124,7 +124,7 @@ def set_app_callbacks(app, app_name):
         if (eb=='1'):
             mf_msg = args[ci*3+0]
         else:
-            mf_msg = f'EB2 {args[ci*3+1]}, EB3 {args[ci*3+2]}'
+            mf_msg = f'{args[ci*3+1]} (EB2), {args[ci*3+2]} (EB3)'
 
         info_msg = f'Annual Supply for {eb_type}'
         min_pd_date = datetime.datetime(2017,6,2)
