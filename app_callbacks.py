@@ -111,28 +111,40 @@ def set_app_callbacks(app, app_name):
     @app.callback(
         [Output('pd-picker','min_date_allowed'),
         Output('future-annual-supply-info-div','children'),
-        Output('future-annual-supply','value')],
-        [Input('user-eb-type','value')]
+        Output('future-annual-supply','value'),
+        Output('multifactor_placeholder','children')],
+        [Input('user-eb-type','value')],
+        [State(f'factor_{c}-{eb}', 'value') \
+            for c in ['China', 'India', 'Row'] \
+            for eb in [1,2,3]]
     )
-    def update_pd_related_defaults(eb_type):
-        info_msg = f'Ave Annual Supply for {eb_type}'
+    def update_pd_related_defaults(eb_type, *args):
+        ci = ['China','India','Row'].index(eb_type.split('-')[0])
+        eb = eb_type.split('-')[1][2:]
+        if (eb=='1'):
+            mf_msg = args[ci*3+0]
+        else:
+            mf_msg = f'EB2 {args[ci*3+1]}, EB3 {args[ci*3+2]}'
+
+        info_msg = f'Annual Supply for {eb_type}'
         min_pd_date = datetime.datetime(2017,6,2)
         annual_supply = 3000
         if(eb_type=='China-EB23'):
             min_pd_date = datetime.datetime(2015,8,1)
             annual_supply = 6000
-        return min_pd_date, info_msg, annual_supply
+        return min_pd_date, info_msg, annual_supply, mf_msg
 
     @app.callback(
         Output('wait-time-estimation','children'),
         [Input('user-eb-type','value'),
         Input('pd-picker','date'),
         Input('future-annual-supply','value'),
+        Input('future-annual-so','value'),
         Input('gc_backlogs_data', 'data')]
     )
-    def call_estimate_wait_time( eb_type, pd, future_supply, backlog_dict):
+    def call_estimate_wait_time( eb_type, pd, future_supply, future_so, backlog_dict):
         pd = pd.split(' ')[0]
-        return estimate_wait_time(eb_type, pd, future_supply, backlog_dict)
+        return estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict)
 
     # @app.callback(
     #     Output('demand_div', 'children'),

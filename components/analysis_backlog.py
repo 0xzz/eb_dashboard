@@ -93,6 +93,10 @@ def get_demand_backlog_layout(app, id):
                 )
             ]),
             dbc.Col([
+                html.Div('140:GreenCard MultiFactor', style={'margin': '5px'}),
+                html.Div(id='multifactor_placeholder', style={'margin': '5px'})
+            ]),
+            dbc.Col([
                 html.Div('Type in your priority date', style={'margin': '5px'}),
                 dcc.DatePickerSingle(
                     id='pd-picker',
@@ -109,7 +113,17 @@ def get_demand_backlog_layout(app, id):
                     type='number',
                     value = 3000,
                     placeholder= 3000,
-                    step = 100, min = 0, max = 20000, style={'maxWidth': '80px'}
+                    step = 10, min = 0, max = 20000, style={'maxWidth': '80px'}
+                )
+            ]),            
+            dbc.Col([
+                html.Div('Expected Annual Spillover', style={'margin': '5px'}),
+                dcc.Input(
+                    id=f'future-annual-so',
+                    type='number',
+                    value = 0,
+                    placeholder= 0,
+                    step = 1, min = 0, max = 10000, style={'maxWidth': '80px'}
                 )
             ])
         ]),
@@ -306,7 +320,7 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
     return fig_tabs, backlog_dict
 
 
-def estimate_wait_time(eb_type, pd, future_supply, backlog_dict):
+def estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict):
 
     def get_backlog_before(eb_type, pd, backlog_dict):
         pd = datetime.datetime.strptime(pd, '%Y-%m-%d').timestamp()
@@ -320,15 +334,18 @@ def estimate_wait_time(eb_type, pd, future_supply, backlog_dict):
 
     bl = get_backlog_before(eb_type, pd, backlog_dict)
 
-    wait_time = bl/future_supply
-    wy = int(wait_time)
-    wm = int(np.round((wait_time - wy)*12.0))
+    try:
+        wait_time = bl/(future_supply+future_so)
+        wy = int(wait_time)
+        wm = int(np.round((wait_time - wy)*12.0))
 
-    msg = f'''
-There are {bl} total of {eb_type} green card demands in front of your PD {pd} at the date you filed your case.
+        msg = f'''
+    There are {bl} total of {eb_type} green card demands in front of your PD {pd} at the date you filed your case.
 
-Based on an anually supply of {future_supply}, your total waiting time is around {wy} year {wm} months.
-    '''
+    Based on an anual supply of {future_supply} and annual spillover of {future_so}, your total waiting time is around {wy} year {wm} months since {pd}.
+        '''
+    except:
+        msg = 'Incorrect Input'
 
     return dcc.Markdown(msg)
 #    if(eb_type=='China-EB1'):
