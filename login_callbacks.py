@@ -11,7 +11,7 @@ def set_login_callbacks(app, _app_route, app_name):
     @app.callback(Output('page-content-frame', 'children'),
                 [Input('page-content-frame', 'id')])
     def dynamic_layout(_):
-        session_cookie = flask.request.cookies.get('qri-auth-session')
+        session_cookie = flask.request.cookies.get('auth-session')
         if not session_cookie:
             # If there's no cookie we need to login.
             return login_layout(app_name)
@@ -45,12 +45,12 @@ def set_login_callbacks(app, _app_route, app_name):
         # Here we just store the given username in a cookie.
         # Actual session cookies should be signed or use a JWT token.
 
-        rep.set_cookie('qri-auth-session', username, max_age=10)
+        rep.set_cookie('auth-session', username, max_age=10)
         return rep
     
     @app.server.route('/logout', methods=['POST'])
     def route_logout():
         # Redirect back to the index and remove the session cookie.
         rep = flask.redirect(_app_route) #or '/'
-        rep.set_cookie('qri-auth-session', '', expires=0)
+        rep.set_cookie('auth-session', '', expires=0)
         return rep

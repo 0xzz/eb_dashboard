@@ -17,11 +17,6 @@ import dash_html_components as html
 
 from components.analysis_backlog import update_backlog_components, estimate_wait_time
 
-with open("tutorial_description.md", "r") as file:
-    tutorial_description_md = file.read()
-
-into_description_md = ''
-
 def set_app_callbacks(app, app_name):
 
     app.clientside_callback(

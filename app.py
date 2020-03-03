@@ -11,11 +11,11 @@ import dash_html_components as html
 
 from resources import external_scripts, external_stylesheets, meta_tags
 
-from EbDashClass import CustomIndexDash
+# from components.EbDashClass import CustomIndexDash
 
 app_name = 'EB Stats'
 
-app = CustomIndexDash(app_name,
+app = dash.Dash(app_name,
 		            external_scripts = [
                   dbc.themes.BOOTSTRAP] + external_stylesheets,
                 meta_tags = meta_tags,

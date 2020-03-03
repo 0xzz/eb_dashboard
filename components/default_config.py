@@ -5,8 +5,8 @@ default_config={
 
 
 default_multiplication_factor = {'China-EB1': 1.98,
-              'China-EB2': 1.35,
-              'China-EB3': 1.35,
+              'China-EB2': 1.4,
+              'China-EB3': 1.4,
               'India-EB1': 2.30,
               'India-EB2': 2.1,
               'India-EB3': 2.1,
