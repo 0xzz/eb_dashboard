@@ -117,7 +117,7 @@ def get_demand_backlog_layout(app, id):
                 )
             ]),            
             dbc.Col([
-                html.Div('Expected Annual Spillover', style={'margin': '5px'}),
+                html.Div('Expected Annual Spillover after FY2019', style={'margin': '5px'}),
                 dcc.Input(
                     id=f'future-annual-so',
                     type='number',
@@ -270,8 +270,8 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
             # print(df485[col], df_visa[col], df485_backlog[f'{col}-backlog'])
 
             x_backlog, y_backlog, textdata_backlog = get_interp_backlog(x, df485_backlog[f'{col}-backlog'].values)
-            backlog_dict['date'] = textdata_backlog[63:]
-            backlog_dict[col] = y_backlog.tolist()[63:]
+            backlog_dict['date'] = textdata_backlog
+            backlog_dict[col] = y_backlog.tolist()
 
             fig_data = [
                 {'x': x+0.49, 'y': df485[col].values, 'type': 'bar','name':f'{c}-EB{eb} Demand', 'marker':{'color':'#EE4444'},
@@ -329,25 +329,122 @@ def estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict):
         b = np.interp(pd, all_pd, all_back)
         return int(b)
 
-    if('date' not in backlog_dict or future_supply<=0):
+    if('date' not in backlog_dict or future_supply<=0 or not pd):
         return ''
 
     bl = get_backlog_before(eb_type, pd, backlog_dict)
 
+    df_visa = load_gc_stats()
+
+    clear_record = get_historical_clear(bl, pd, df_visa, eb_type)
+
+    print(clear_record)
+
+    msg_list = []
+
     try:
-        wait_time = bl/(future_supply+future_so)
+        # wait_time = bl/(future_supply+future_so)
+        # wy = int(wait_time)
+        # wm = int(np.round((wait_time - wy)*12.0))
+
+        total_month = 0
+
+        msg_list.append(f'There are {bl} total of {eb_type} green card demands in front of your PD {pd} at the date you filed your case.')
+
+        for i, cr in enumerate(clear_record):
+            fy, cl, rm, new_month = cr['fy'], cr['clear'], cr['remaining'], cr['lapsed_month']
+            total_month += new_month
+            if i==0:
+                msg_list.append(f'From {pd} to the end of FY{fy}, {cl} {eb_type} green card demands were cleared, {rm} are still remaining')
+            else:
+                msg_list.append(f'After FY{fy}, {cl} {eb_type} green card demands were cleared, {rm} are still remaining')
+
+        if(len(clear_record)==0):
+            remaining_bl = bl
+        else:
+            remaining_bl = clear_record[-1]['remaining']
+
+        wait_time = remaining_bl/(future_supply+future_so)
         wy = int(wait_time)
         wm = int(np.round((wait_time - wy)*12.0))
 
-        msg = f'''
-    There are {bl} total of {eb_type} green card demands in front of your PD {pd} at the date you filed your case.
+        msg_list.append(f' Based on a future anual supply of {future_supply} and annual spillover of {future_so} for {eb_type}, the remaining backlog would need an additional {wy} year {wm} months starting from 2019-10-1. ')
 
-    Based on an anual supply of {future_supply} and annual spillover of {future_so}, your total waiting time is around {wy} year {wm} months since {pd}.
-        '''
+        addtional_month = wy*12 + wm
+        
+        green_month = 10+addtional_month
+        green_yr = 2019 + int((green_month-1)/12.0)
+        green_month = (green_month-1)%12+1
+        msg_list.append(f' Your final action date is likely to become current at {green_yr}/{green_month}')
+
+        pd_yr = int(pd.split('-')[0])
+        pd_mm = int(pd.split('-')[1])
+        
+        total_month = (green_yr-pd_yr)*12+(green_month-pd_mm)
+        total_yr = int(total_month/12)
+        total_month -= total_yr*12
+        msg_list.append(f' Your total wait time is {total_yr} year and {total_month} months after {pd}')
+
+        msg = '\n\n'.join(msg_list)
+
+        print(msg)
+
     except:
         msg = 'Incorrect Input'
 
     return dcc.Markdown(msg)
-#    if(eb_type=='China-EB1'):
 
 
+def get_historical_clear(bl, pd, df_visa, eb_type):
+    c = eb_type.split('-')[0]
+    eb = eb_type.split('-')[1]
+    print(c, eb)
+    if(eb=='EB23'):
+        df_visa[f'{c}-EB23'] = df_visa[f'{c}-EB2'] + df_visa[f'{c}-EB3']
+    print(df_visa.keys())
+
+    fy, delta_days = pd_to_FY(pd)
+
+    clear_record = []
+
+    for yr in range(fy,2020):
+        clear_record.append({'fy':yr, 'clear': df_visa[eb_type].iloc[yr-2009], 'remaining': 0, 'lapsed_month': 12})
+        if(yr==fy):
+            supply_fraction, date_fraction = get_yr_fraction(eb_type, yr, delta_days)
+            clear_record[-1]['clear']*=supply_fraction
+            clear_record[-1]['clear'] = int(clear_record[-1]['clear'])
+            clear_record[-1]['lapsed_month']*=date_fraction
+            clear_record[-1]['lapsed_month'] = int(clear_record[-1]['lapsed_month']+0.5)
+
+        bl-=clear_record[-1]['clear']
+        clear_record[-1]['remaining'] = bl
+    
+    return clear_record
+
+
+def pd_to_FY(pd):
+    yr, mm, _ = pd.split('-')
+    yr = int(yr)
+    mm = int(mm)
+    fy = yr+1 if mm>=10 else yr
+
+    pd = datetime.datetime.strptime(pd, '%Y-%m-%d')
+    fy_begin = datetime.datetime(fy-1, 10, 1)
+    days_after_fy_start = (pd-fy_begin).days
+
+    return fy, days_after_fy_start
+
+
+def get_yr_fraction(eb_type, yr, delta_days):
+    fraction = 1.0-delta_days/365.0
+    date_fraction = 1.0-delta_days/365.0
+
+    if(eb_type=='China-EB1'):
+        if(yr==2017):
+            fraction = 1.0-delta_days/(365.0/12.0*8.0)
+        elif(yr==2018):
+            fraction = 1.0-delta_days/(365.0/12.0*6.0)
+    if(fraction<0):
+        fraction = 0.0
+
+    return fraction, date_fraction

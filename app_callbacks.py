@@ -126,7 +126,7 @@ def set_app_callbacks(app, app_name):
         else:
             mf_msg = f'{args[ci*3+1]} (EB2), {args[ci*3+2]} (EB3)'
 
-        info_msg = f'Annual Supply for {eb_type}'
+        info_msg = f'Annual Supply for {eb_type} after FY2019'
         min_pd_date = datetime.datetime(2017,6,2)
         annual_supply = 3000
         if(eb_type=='China-EB23'):
@@ -155,8 +155,11 @@ def set_app_callbacks(app, app_name):
         Input('gc_backlogs_data', 'data')]
     )
     def call_estimate_wait_time( eb_type, pd, future_supply, future_so, backlog_dict):
-        pd = pd.split(' ')[0]
-        return estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict)
+        if(pd):
+            pd = pd.split(' ')[0]
+            return estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict)
+        else:
+            return ''
 
     # @app.callback(
     #     Output('demand_div', 'children'),

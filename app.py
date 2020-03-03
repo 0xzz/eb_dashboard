@@ -11,8 +11,6 @@ import dash_html_components as html
 
 from resources import external_scripts, external_stylesheets, meta_tags
 
-# from components.EbDashClass import CustomIndexDash
-
 app_name = 'EB Stats'
 
 app = dash.Dash(app_name,
