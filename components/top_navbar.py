@@ -27,7 +27,7 @@ def get_navbar(app_name):
                     dbc.DropdownMenuItem(getHtmlA("140/485 Annual Data", "data_140_485")),
                 ],
             ),
-            dbc.NavItem(dbc.Button("Contact Us", color='link', id="contact_us",  className="mr-1", style={'margin':'5px','font-size':'1.3rem','color':'white','fontWeidth':'bold'})),
+            dbc.NavItem(dbc.Button("Contact Us", color='link', id="contact_us",  className="mr-1 contact-button")),
             dbc.Modal(
                 [
                     dbc.ModalHeader("Contact US"),

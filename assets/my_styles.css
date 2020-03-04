@@ -23,6 +23,17 @@
   color: #333;
 }
 
+.contact-button {
+  margin-top: 0.8rem;
+  margin-left: 0.2rem;
+  padding: 0.05rem;
+  font-size: 1.3rem;
+  font-weight: 100;
+  letter-spacing: 0;
+  color : white;
+  font-weight:bold;
+}
+
 .div-value-info {
   margin: 0.5rem;
   height: 38px;
