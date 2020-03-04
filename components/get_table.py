@@ -3,15 +3,37 @@ import dash_table
 import dash_html_components as html
 
 def get_table(df):
-    return html.Div([
-        dash_table.DataTable(
+    return dash_table.DataTable(
+            style_data={
+                'whiteSpace': 'narrow',
+                'height': 'auto',
+                'border': 'none'
+            },
             columns=[{"name": i, "id": i} for i in df.columns],
             data=df.to_dict('records'),
-            sort_action="native",
             style_cell={
-                'minWidth': '40px', 'width': '60px', 'maxWidth': '80px',
+                'whiteSpace': 'narrow',
                 'overflow': 'hidden',
                 'textOverflow': 'ellipsis',
+                'backgroundColor': 'rgb(235, 235, 235)',
             },
+            style_as_list_view=True,
+            style_table={'overflowX':'scroll'},
+            style_header={
+                'backgroundColor': '#6c7ae0',
+                'fontWeight': 'bold',
+                'font-size': '1.2rem',
+                'color': 'white',
+                'padding':'0.3rem'
+            },
+            style_data_conditional=[{
+                'if': {'column_id': 'FY'},
+                #'backgroundColor': '#6c7ae0',
+                'fontWeight': 'bold',
+                #'color': 'white',
+            },
+             {
+            'if': {'row_index': 'even'},
+            'backgroundColor': '#f8f6ff'
+            }]
         )
-    ], style = {'overflow-x':'auto'})

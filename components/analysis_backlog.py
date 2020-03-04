@@ -73,8 +73,14 @@ def get_demand_backlog_layout(app, id):
                 ]),
                 dbc.Col([
                     html.Div('140:GreenCard MultiFactor', style={'margin': '5px'}),
-                    html.Div(id='multifactor_placeholder', style={'margin': '5px'})
+                    html.Div(id='multifactor_placeholder', className = 'div-value-info')
                 ]),
+                dbc.Col([
+                    html.Div(id='designed-annual-supply-info-div', style={'margin': '5px'}),
+                    html.Div(id='designed-annual-supply', className = 'div-value-info')
+                ]),            
+            ]),
+            dbc.Row([
                 dbc.Col([
                     html.Div('Type in your priority date', style={'margin': '5px'}),
                     dcc.DatePickerSingle(
@@ -84,19 +90,7 @@ def get_demand_backlog_layout(app, id):
                         initial_visible_month=datetime.datetime(2018,2,1),
                         date=str(datetime.datetime(2018, 2, 1, 23, 59, 59))
                     )
-                ])
-            ]),
-            dbc.Row([
-                dbc.Col([
-                    html.Div(id='future-annual-supply-info-div', style={'margin': '5px'}),
-                    dcc.Input(
-                        id=f'future-annual-supply',
-                        type='number',
-                        value = 3000,
-                        placeholder= 3000,
-                        step = 10, min = 0, max = 140000, style={'maxWidth': '80px'}
-                    )
-                ]),            
+                ]),
                 dbc.Col([
                     html.Div('Expected Annual Spillover after FY2019', style={'margin': '5px'}),
                     dcc.Input(
@@ -107,12 +101,12 @@ def get_demand_backlog_layout(app, id):
                         step = 1, min = 0, max = 140000, style={'maxWidth': '80px'}
                     )
                 ]),
-                dbc.Col(dbc.Button('Estimate!', color="success", id='button-estimate-wait-time', style={'margin':'20px'}))
+                dbc.Col(dbc.Button('Let me Green', id='button-estimate-wait-time'))
             ])
         ], style={'margin':'0.5rem','padding':'0.5rem','border-radius':'6px','background-color':'#CCCCCC'}),
         html.Div(id='wait-time-estimation'),
         dbc.Row([
-            html.H6('EB123 Green Card Demand Estimation by Country by FY'),
+            html.H6('EB123 Green Card Demand Analysis'),
             info_button1
         ]),
         info_section1,
@@ -129,7 +123,7 @@ def get_demand_backlog_layout(app, id):
             dcc.Tab(id='gc_demand_table_layout', label="View Table")
         ]),
         dbc.Row([
-            html.H6('EB123 Green Card Backlog Estimation by Country by FY'),
+            html.H6('EB123 Green Card Backlog Analysis'),
             info_button2
         ], className='Section-Title'),
         info_section2,
@@ -206,13 +200,13 @@ def compute_df485(df140, multiplication_factor):
     return df485
 
 def compute_backlog(df485, df_visa):
-    df485_backlog = pd.DataFrame(index = df485.index) #estimate the 485 backlog at the end of each FY year
-    df485_backlog['FY']=list(range(2009,2020))
+    df485_backlog = pd.DataFrame() 
+    df485_backlog['FY']=list(range(2008,2020))
     CList = ['China','India','Row']
     for eb in [1,2,3]:
         for c in CList:
-            df485_backlog[f'{c}-EB{eb}-cum-demand'] = df485[f'{c}-EB{eb}'].values.cumsum()
-            df485_backlog[f'{c}-EB{eb}-cum-supply'] = df_visa[f'{c}-EB{eb}'].values.cumsum()
+            df485_backlog[f'{c}-EB{eb}-cum-demand'] = [0]+df485[f'{c}-EB{eb}'].values.cumsum().tolist()
+            df485_backlog[f'{c}-EB{eb}-cum-supply'] = [0]+df_visa[f'{c}-EB{eb}'].values.cumsum().tolist()
             df485_backlog[f'{c}-EB{eb}-backlog'] = df485_backlog[f'{c}-EB{eb}-cum-demand'] - df485_backlog[f'{c}-EB{eb}-cum-supply']
 
     for c in CList:
@@ -263,6 +257,7 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
         return x1, y1, textdata
         
     x = np.array(list(range(2009,2020)))
+    x_for_backlog = np.array(list(range(2008,2020)))
     fig_tabs = []
     for c in ['China','India','Row']:
         df485[f'{c}-EB23'] = df485[f'{c}-EB2'] +df485[f'{c}-EB3'] 
@@ -274,7 +269,7 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
         for c in ['China','India','Row']:
             col = f'{c}-EB{eb}'
 
-            x_backlog, y_backlog, textdata_backlog = get_interp_backlog(x, df485_backlog[f'{col}-backlog'].values)
+            x_backlog, y_backlog, textdata_backlog = get_interp_backlog(x_for_backlog, df485_backlog[f'{col}-backlog'].values)
             backlog_dict['date'] = textdata_backlog
             backlog_dict[col] = y_backlog.tolist()
 
@@ -354,9 +349,9 @@ def estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict):
             fy, cl, rm, new_month = cr['fy'], cr['clear'], cr['remaining'], cr['lapsed_month']
             total_month += new_month
             if i==0:
-                msg_list.append(f'From {pd} to the end of FY{fy}, {cl} {eb_type} green card demands were cleared, {rm} were still remaining')
+                msg_list.append(f'From {pd} to the end of FY{fy}, {cl} {eb_type} green card demands were cleared, {rm} were still remaining.')
             else:
-                msg_list.append(f'During FY{fy}, {cl} {eb_type} green card demands were cleared, {rm} were still remaining')
+                msg_list.append(f'During FY{fy}, {cl} {eb_type} green card demands were cleared, {rm} were still remaining.')
 
         if(len(clear_record)==0):
             remaining_bl = bl
@@ -367,14 +362,14 @@ def estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict):
         wy = int(wait_time)
         wm = int(np.round((wait_time - wy)*12.0))
 
-        msg_list.append(f' Based on a future annual supply of {future_supply} and annual spillover of {future_so} for {eb_type}, the remaining backlog would need an additional {wy} year {wm} months starting from 2019-10-1. ')
+        msg_list.append(f' Based on a future annual supply of {future_supply} and annual spillover of {future_so} for {eb_type}, the remaining backlog would need an additional {wy} year {wm} months starting from 2019-10-1.')
 
         addtional_month = wy*12 + wm
         
         green_month = 10+addtional_month
         green_yr = 2019 + int((green_month-1)/12.0)
         green_month = (green_month-1)%12+1
-        msg_list.append(f' Your final action date is likely to become current at {green_yr}-{str(green_month).zfill(2):}')
+        msg_list.append(f' Your final action date is likely to become current at {green_yr}-{str(green_month).zfill(2):}.')
 
         pd_yr = int(pd.split('-')[0])
         pd_mm = int(pd.split('-')[1])

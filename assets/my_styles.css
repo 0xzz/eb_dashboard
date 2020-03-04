@@ -10,7 +10,7 @@
 
 .external_links {
   margin: 0.25rem 0.25rem 0.25rem 0.25rem;
-  padding: 0.25rem 0.25rem 0.25rem 0.25rem;  
+  padding: 0.25rem 0.5rem 3rem 0.5rem;
   height: 25px;
   color: #fff;
   background-color: #17a2b8;
@@ -23,15 +23,25 @@
   color: #333;
 }
 
+.div-value-info {
+  margin: 0.5rem;
+  height: 38px;
+  padding: 6px 10px;
+  border: 1px solid #D1D1D1;
+  border-radius: 5px;
+  background-color: #DDDDDD;
+  box-sizing: border-box;
+  max-width: 200px;
+}
 p {
   font-size: 1.4rem;
   padding: 0.5rem;
   margin-left: 2rem;
   max-width: 95%;
-  border-color: #2196F3;
-  border-left: 6px solid #2196F3;
+  border-color: #6c7ae0;
+  border-left: 6px solid #6c7ae0;
   border-radius: 6px;
-  background-color: #ddffff;
+  background-color: #e3e6ee;
   color: #333;
   transition: 0.5s;
   text-align: left;
@@ -48,6 +58,32 @@ H4 {
   margin-top: 2.5rem;
 }
 
+#button-estimate-wait-time {
+  margin:2rem;
+  height: 50px;
+  width: 150px;
+  border: none;
+  border-radius: 5px;
+  font-size:1.3rem;
+  background-color: #1CA165;
+}
+
+.tab-container{
+  line-height: 1.8;
+  padding: 0.25rem;
+}
+.tab {
+  padding: 0.75rem !important;
+  /* background-color: #e3e6ee !important; */
+}
+.tab--selected {
+  /* border-bottom: 3px solid #6c7ae0 !important; */
+  border-bottom: none !important;
+  border-top: none !important;
+  background-color: #8b95e6 !important;
+  color: white !important;
+  font-weight: bold;
+}
 /* width */
 ::-webkit-scrollbar {
   width: 10px;

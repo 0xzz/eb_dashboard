@@ -110,8 +110,8 @@ def set_app_callbacks(app, app_name):
 
     @app.callback(
         [Output('pd-picker','min_date_allowed'),
-        Output('future-annual-supply-info-div','children'),
-        Output('future-annual-supply','value'),
+        Output('designed-annual-supply-info-div','children'),
+        Output('designed-annual-supply','children'),
         Output('multifactor_placeholder','children')],
         [Input('user-eb-type','value')],
         [State(f'factor_{c}-{eb}', 'value') \
@@ -152,7 +152,7 @@ def set_app_callbacks(app, app_name):
          Input('gc_backlogs_data', 'data')],
         [State('user-eb-type','value'),
         State('pd-picker','date'),
-        State('future-annual-supply','value'),
+        State('designed-annual-supply','children'),
         State('future-annual-so','value')]
     )
     def call_estimate_wait_time(n_clicks, backlog_dict, eb_type, pd, future_supply, future_so):
