@@ -11,6 +11,8 @@ import numpy as np
 import flask, base64, hashlib
 from flask import send_file
 
+import requests
+
 from dash.dependencies import Output, Input, State, ClientsideFunction
 import dash_core_components as dcc
 import dash_html_components as html
@@ -161,6 +163,20 @@ def set_app_callbacks(app, app_name):
             return estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict)
         else:
             return ''
+
+    @app.callback(
+        Output('access_count','value'),
+        [Input('dummy-page-div','children')]
+    )
+    def upload_access_count(c):
+        res = requests.get('https://eb-stats.firebaseio.com/count.json')
+        count_record = res.json()
+        print(count_record)
+        count_record['count'] += 1
+        print(count_record)
+        res = requests.put('https://eb-stats.firebaseio.com/count.json', data = json.dumps(count_record))
+        print(res)
+        return count_record['count']
 
 def is_button_clicked(ind, time_stamp_list):
     t0 = time_stamp_list[ind]

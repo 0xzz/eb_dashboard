@@ -11,6 +11,7 @@ from components.data_140_485 import get_overall_140_485_view
 from components.data_140_stats import get_140_stats
 from components.data_gc_stats import get_gc_stats_layout
 from components.analysis_backlog import get_demand_backlog_layout
+from components.page_view import get_page_view
 
 from helpers import load_vb_dates, load_140_485_by_FY, load_140_stats, load_gc_stats
 
@@ -39,6 +40,8 @@ def get_app_layout(app, app_name):
 
     demand_backlog_layout = get_demand_backlog_layout(app, 'data_demand_backlog')
 
+    page_view_layout = get_page_view()
+
     return html.Div([
               navbar,
               intro_layout,
@@ -47,6 +50,7 @@ def get_app_layout(app, app_name):
               stats_140_layout,
               gc_stats_layout,
               overall_140_485_layout,
+              page_view_layout
             ], className="container-fluid")
 
 
