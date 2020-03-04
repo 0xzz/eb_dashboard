@@ -148,44 +148,19 @@ def set_app_callbacks(app, app_name):
 
     @app.callback(
         Output('wait-time-estimation','children'),
-        [Input('user-eb-type','value'),
-        Input('pd-picker','date'),
-        Input('future-annual-supply','value'),
-        Input('future-annual-so','value'),
-        Input('gc_backlogs_data', 'data')]
+        [Input('button-estimate-wait-time','n_clicks'),
+         Input('gc_backlogs_data', 'data')],
+        [State('user-eb-type','value'),
+        State('pd-picker','date'),
+        State('future-annual-supply','value'),
+        State('future-annual-so','value')]
     )
-    def call_estimate_wait_time( eb_type, pd, future_supply, future_so, backlog_dict):
+    def call_estimate_wait_time(n_clicks, backlog_dict, eb_type, pd, future_supply, future_so):
         if(pd):
             pd = pd.split(' ')[0]
             return estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict)
         else:
             return ''
-
-    # @app.callback(
-    #     Output('demand_div', 'children'),
-    #     [Input(f'factor_{c}-{eb}', 'value') \
-    #         for c in ['China', 'India', 'Row'] \
-    #         for eb in [1,2,3]] \
-    #     + [Input('gc_demand_stack_toggle','value')]
-    # )
-    # def update_backlog_analysis(*arg):
-    #     factors = {}
-    #     ind = 0
-    #     for c in ['China','India','Row']:
-    #         for eb in [1,2,3]:
-    #             factors[f'{c}-EB{eb}'] = arg[ind]
-    #             ind+=1
-    #     # print(factors)
-    #     isStack = arg[-1]
-    #     backlog_layout = get_backlog(factors, isStack)
-    #     return backlog_layout
-
-    # @app.callback(
-    #     Output('gc_stats_fig', 'figure'),
-    #     [Input('gc_stats_stack_toggle','value')]
-    # )
-    # def update_gc_analysis(isStack):
-    #     return update_gc_stats_figure_content(isStack)
 
 def is_button_clicked(ind, time_stamp_list):
     t0 = time_stamp_list[ind]

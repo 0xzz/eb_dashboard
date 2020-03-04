@@ -1,0 +1,2 @@
+* Data source at USCIS Monthly Visa Bulletin [Here](https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin.html)
+* Double Click white space in the three charts to zoom out and view the FA dates back to 2007

@@ -42,16 +42,11 @@ def get_app_layout(app, app_name):
     return html.Div([
               navbar,
               intro_layout,
-            #   tutorial_elements,
+              demand_backlog_layout,
               fig_vb_dates_layout,
-              overall_140_485_layout,
               stats_140_layout,
               gc_stats_layout,
-              demand_backlog_layout
-              # html.Div('Please type in the [140:green card] multiplication factors'),
-              # multiplication_factor_layout,
-              # get_toggle('gc_demand_stack_toggle', False),
-              # html.Div(id='demand_div')
+              overall_140_485_layout,
             ], className="container-fluid")
 
 

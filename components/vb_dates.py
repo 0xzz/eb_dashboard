@@ -45,16 +45,10 @@ def get_final_action_dates_figures(app, id, *argv):
                 },
                 config=default_config,
             ))
-    info_component = html.Div([
-            html.Div([
-                'Data source at USCIS Monthly Visa Bulletin',
-                html.A(' Here', href='https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin.html', target='_blank')
-            ]),
-            html.Div('Double Click white space in the three charts to zoom out and view the FA dates back to 2007'),
-        ])
-
+    with open("docs/vb.md", "rb") as file:
+        vb_faq_md = file.read().decode('utf8')
+    info_component = dcc.Markdown(vb_faq_md)
     info_button, info_section = get_local_info_component(app, id, info_component)
-
 
     return html.Div([
         dbc.Row([

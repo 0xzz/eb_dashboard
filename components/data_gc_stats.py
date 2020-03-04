@@ -22,10 +22,9 @@ def get_gc_stats_layout(app, id, df):
         config=default_config,
     )
 
-    info_component = html.Div([
-        'Data source can be found in DOS Annual Reports ', 
-        html.A('Here', href='https://travel.state.gov/content/travel/en/legal/visa-law0/visa-statistics/annual-reports.html',target='_blank')
-    ])
+    with open("docs/stats_gc.md", "rb") as file:
+        faq_md = file.read().decode('utf8')
+    info_component = dcc.Markdown(faq_md)
     info_button, info_section = get_local_info_component(app, id, info_component)
 
     return html.Div([

@@ -50,30 +50,8 @@ def get_demand_backlog_layout(app, id):
 
     return html.Div([
         dbc.Row([
-            html.H4('EB Green Card Demand and Backlog Anlysis', id=id),
-            info_button1
+            html.H4('EB Green Card Wait Time, Demand and Backlog Anlysis', id=id),
         ], className='Section-Title'),
-        info_section1,
-        html.Div([
-            html.Div('Please type in the [140:green card] multiplication factors'),
-            multiplication_factor_layout
-        ]),
-        html.H6('EB123 Green Card Demand Estimation by Country by FY'),
-        dcc.Store(id='gc_demand_figure_content', data = {}),
-        dcc.Tabs([
-            dcc.Tab([
-                get_toggle('gc_demand_stack_toggle', False),
-                gc_demand_figure_layout
-            ],label="View Trend"),
-            dcc.Tab(id='gc_demand_table_layout', label="View Table")
-        ]),
-        dbc.Row([
-            html.H6('EB123 Green Card Backlog Estimation by Country by FY'),
-            info_button2
-        ], className='Section-Title'),
-        info_section2,
-        dcc.Tabs(id='gc_backlogs_tabs'),
-        dcc.Store(id='gc_backlogs_data', data = {}),
         dbc.Row([
             html.H6('Estimate Your Waiting Time'),
             info_button3
@@ -105,7 +83,9 @@ def get_demand_backlog_layout(app, id):
                     initial_visible_month=datetime.datetime(2018,2,1),
                     date=str(datetime.datetime(2018, 2, 1, 23, 59, 59))
                 )
-            ]),
+            ])
+        ]),
+        dbc.Row([
             dbc.Col([
                 html.Div(id='future-annual-supply-info-div', style={'margin': '5px'}),
                 dcc.Input(
@@ -125,9 +105,32 @@ def get_demand_backlog_layout(app, id):
                     placeholder= 0,
                     step = 1, min = 0, max = 140000, style={'maxWidth': '80px'}
                 )
-            ])
+            ]),
+            dbc.Col(dbc.Button('Estimate!', color="success", id='button-estimate-wait-time', style={'margin':'20px'}))
         ]),
-        html.Div(id='wait-time-estimation')
+        html.Div(id='wait-time-estimation'),
+        dbc.Row([
+            html.H6('EB123 Green Card Demand Estimation by Country by FY'),
+            info_button1
+        ]),
+        info_section1,
+        html.H6('[140:green card] multiplication factors'),
+        multiplication_factor_layout,
+        dcc.Store(id='gc_demand_figure_content', data = {}),
+        dcc.Tabs([
+            dcc.Tab([
+                get_toggle('gc_demand_stack_toggle', False),
+                gc_demand_figure_layout
+            ],label="View Trend"),
+            dcc.Tab(id='gc_demand_table_layout', label="View Table")
+        ]),
+        dbc.Row([
+            html.H6('EB123 Green Card Backlog Estimation by Country by FY'),
+            info_button2
+        ], className='Section-Title'),
+        info_section2,
+        dcc.Tabs(id='gc_backlogs_tabs'),
+        dcc.Store(id='gc_backlogs_data', data = {})
     ])
 
 def update_backlog_components(multiplication_factor):
@@ -151,7 +154,6 @@ def update_backlog_components(multiplication_factor):
 def get_demand_supply_fig_content(df485, df_visa):
 
     x = list(range(2009,2020))
-    #x = [datetime.datetime(yr,10,1) for yr in range(2009, 2020)]
     x_range = [2008.5,2019.5]
     fig_data = [{'x': x, 'y': df485[f'{c}-EB{eb}'], 
                 'type': 'bar','name':f'{c}-EB{eb} Demand', 'opacity':0.7,
@@ -267,7 +269,6 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
     for eb in [1,23]:
         for c in ['China','India','Row']:
             col = f'{c}-EB{eb}'
-            # print(df485[col], df_visa[col], df485_backlog[f'{col}-backlog'])
 
             x_backlog, y_backlog, textdata_backlog = get_interp_backlog(x, df485_backlog[f'{col}-backlog'].values)
             backlog_dict['date'] = textdata_backlog
@@ -338,15 +339,9 @@ def estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict):
 
     clear_record = get_historical_clear(bl, pd, df_visa, eb_type)
 
-    print(clear_record)
-
     msg_list = []
 
     try:
-        # wait_time = bl/(future_supply+future_so)
-        # wy = int(wait_time)
-        # wm = int(np.round((wait_time - wy)*12.0))
-
         total_month = 0
 
         msg_list.append(f'There are {bl} total of {eb_type} green card demands in front of your PD {pd} at the date you filed your case.')
@@ -355,9 +350,9 @@ def estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict):
             fy, cl, rm, new_month = cr['fy'], cr['clear'], cr['remaining'], cr['lapsed_month']
             total_month += new_month
             if i==0:
-                msg_list.append(f'From {pd} to the end of FY{fy}, {cl} {eb_type} green card demands were cleared, {rm} are still remaining')
+                msg_list.append(f'From {pd} to the end of FY{fy}, {cl} {eb_type} green card demands were cleared, {rm} were still remaining')
             else:
-                msg_list.append(f'After FY{fy}, {cl} {eb_type} green card demands were cleared, {rm} are still remaining')
+                msg_list.append(f'During FY{fy}, {cl} {eb_type} green card demands were cleared, {rm} were still remaining')
 
         if(len(clear_record)==0):
             remaining_bl = bl
@@ -368,7 +363,7 @@ def estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict):
         wy = int(wait_time)
         wm = int(np.round((wait_time - wy)*12.0))
 
-        msg_list.append(f' Based on a future anual supply of {future_supply} and annual spillover of {future_so} for {eb_type}, the remaining backlog would need an additional {wy} year {wm} months starting from 2019-10-1. ')
+        msg_list.append(f' Based on a future annual supply of {future_supply} and annual spillover of {future_so} for {eb_type}, the remaining backlog would need an additional {wy} year {wm} months starting from 2019-10-1. ')
 
         addtional_month = wy*12 + wm
         
@@ -387,8 +382,6 @@ def estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict):
 
         msg = '\n\n'.join(msg_list)
 
-        print(msg)
-
     except:
         msg = 'Incorrect Input'
 
@@ -398,10 +391,8 @@ def estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict):
 def get_historical_clear(bl, pd, df_visa, eb_type):
     c = eb_type.split('-')[0]
     eb = eb_type.split('-')[1]
-    print(c, eb)
     if(eb=='EB23'):
         df_visa[f'{c}-EB23'] = df_visa[f'{c}-EB2'] + df_visa[f'{c}-EB3']
-    print(df_visa.keys())
 
     fy, delta_days = pd_to_FY(pd)
 

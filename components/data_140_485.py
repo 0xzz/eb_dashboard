@@ -29,8 +29,9 @@ def get_overall_140_485_view(app, id, df_140_485):
         config=default_config,
     )
 
-    info_component = html.Div('The safe threshold is computed using 140k (total annual EB green card limit) divided by 2.167 (average global 140:visa multiplication factor). An approval number higher than this threshold would lead to backlog in EB green card petition')
-
+    with open("docs/total_140_485.md", "rb") as file:
+        faq_md = file.read().decode('utf8')
+    info_component = dcc.Markdown(faq_md)
     info_button, info_section = get_local_info_component(app, id, info_component)
 
     return html.Div([

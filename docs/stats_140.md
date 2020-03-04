@@ -1,0 +1,2 @@
+*  Data source at USCIS [here](https://www.uscis.gov/sites/default/files/USCIS/Resources/Reports%20and%20Studies/Immigration%20Forms%20Data/Employment-based/I140_by_class_country_FY09_19.pdf)
+* Please note that the approved numbers of FY2019 have been corrected using the pending numbers and 2019 denial rate. The safe EB 140 thresholds are computed using 40k divided by the corresponding global EB123 multiplication factors: 2.4, 2.0, and 2.1, respectively.
