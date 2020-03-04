@@ -181,6 +181,11 @@ def set_app_callbacks(app, app_name):
                 }
                 print(new_prediction_record)
                 res = requests.post('https://eb-stats.firebaseio.com/prediction_record.json', data = json.dumps(new_prediction_record))
+
+                res = requests.get('https://eb-stats.firebaseio.com/prediction_count.json')
+                count_record = res.json()
+                count_record['count'] += 1
+                res = requests.put('https://eb-stats.firebaseio.com/prediction_count.json', data = json.dumps(count_record))
             return pred_results
         else:
             return ''

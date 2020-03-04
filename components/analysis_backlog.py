@@ -361,19 +361,24 @@ def estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict):
 
         if(len(clear_record)==0):
             remaining_bl = bl
+            additional_wait_starting_date = pd
         else:
             remaining_bl = clear_record[-1]['remaining']
+            additional_wait_starting_date = '2019-10-1'
 
         wait_time = remaining_bl/(future_supply+future_so)
         wy = int(wait_time)
         wm = int(np.round((wait_time - wy)*12.0))
 
-        msg_list.append(f' Based on a future annual supply of {future_supply} and annual spillover of {future_so} for {eb_type}, the remaining backlog would need an additional {wy} year {wm} months starting from 2019-10-1.')
+        msg_list.append(f' Based on a future annual supply of {future_supply} and annual spillover of {future_so} for {eb_type}, the remaining backlog would need an additional {wy} year {wm} months starting from {additional_wait_starting_date}.')
+
+        additional_wait_starting_yr = int(additional_wait_starting_date.split('-')[0])
+        additional_wait_starting_mm = int(additional_wait_starting_date.split('-')[1])
 
         addtional_month = wy*12 + wm
         
-        green_month = 10+addtional_month
-        green_yr = 2019 + int((green_month-1)/12.0)
+        green_month = additional_wait_starting_mm+addtional_month
+        green_yr = additional_wait_starting_yr + int((green_month-1)/12.0)
         green_month = (green_month-1)%12+1
         msg_list.append(f' Your final action date is likely to become current at {green_yr}-{str(green_month).zfill(2):}.')
 
