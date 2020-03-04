@@ -57,57 +57,59 @@ def get_demand_backlog_layout(app, id):
             info_button3
         ], className='Section-Title'),
         info_section3,
-        dbc.Row([
-            dbc.Col([
-                html.Div('Select your EB category', style={'margin': '5px'}),
-                dcc.Dropdown(
-                    id='user-eb-type',
-                    options=[
-                        {'label': f'{c}-EB{eb}', 'value': f'{c}-EB{eb}'} 
-                        for c in ['China', 'India','Row'] for eb in [1,23]
-                    ],
-                    value='China-EB1',
-                    style={'width': '150px'}
-                )
+        html.Div([
+            dbc.Row([
+                dbc.Col([
+                    html.Div('Select your EB category', style={'margin': '5px'}),
+                    dcc.Dropdown(
+                        id='user-eb-type',
+                        options=[
+                            {'label': f'{c}-EB{eb}', 'value': f'{c}-EB{eb}'} 
+                            for c in ['China', 'India','Row'] for eb in [1,23]
+                        ],
+                        value='China-EB1',
+                        style={'width': '150px'}
+                    )
+                ]),
+                dbc.Col([
+                    html.Div('140:GreenCard MultiFactor', style={'margin': '5px'}),
+                    html.Div(id='multifactor_placeholder', style={'margin': '5px'})
+                ]),
+                dbc.Col([
+                    html.Div('Type in your priority date', style={'margin': '5px'}),
+                    dcc.DatePickerSingle(
+                        id='pd-picker',
+                        min_date_allowed=datetime.datetime(2017,6,2),
+                        max_date_allowed=datetime.datetime(2020,9,30),
+                        initial_visible_month=datetime.datetime(2018,2,1),
+                        date=str(datetime.datetime(2018, 2, 1, 23, 59, 59))
+                    )
+                ])
             ]),
-            dbc.Col([
-                html.Div('140:GreenCard MultiFactor', style={'margin': '5px'}),
-                html.Div(id='multifactor_placeholder', style={'margin': '5px'})
-            ]),
-            dbc.Col([
-                html.Div('Type in your priority date', style={'margin': '5px'}),
-                dcc.DatePickerSingle(
-                    id='pd-picker',
-                    min_date_allowed=datetime.datetime(2017,6,2),
-                    max_date_allowed=datetime.datetime(2020,9,30),
-                    initial_visible_month=datetime.datetime(2018,2,1),
-                    date=str(datetime.datetime(2018, 2, 1, 23, 59, 59))
-                )
+            dbc.Row([
+                dbc.Col([
+                    html.Div(id='future-annual-supply-info-div', style={'margin': '5px'}),
+                    dcc.Input(
+                        id=f'future-annual-supply',
+                        type='number',
+                        value = 3000,
+                        placeholder= 3000,
+                        step = 10, min = 0, max = 140000, style={'maxWidth': '80px'}
+                    )
+                ]),            
+                dbc.Col([
+                    html.Div('Expected Annual Spillover after FY2019', style={'margin': '5px'}),
+                    dcc.Input(
+                        id=f'future-annual-so',
+                        type='number',
+                        value = 0,
+                        placeholder= 0,
+                        step = 1, min = 0, max = 140000, style={'maxWidth': '80px'}
+                    )
+                ]),
+                dbc.Col(dbc.Button('Estimate!', color="success", id='button-estimate-wait-time', style={'margin':'20px'}))
             ])
-        ]),
-        dbc.Row([
-            dbc.Col([
-                html.Div(id='future-annual-supply-info-div', style={'margin': '5px'}),
-                dcc.Input(
-                    id=f'future-annual-supply',
-                    type='number',
-                    value = 3000,
-                    placeholder= 3000,
-                    step = 10, min = 0, max = 140000, style={'maxWidth': '80px'}
-                )
-            ]),            
-            dbc.Col([
-                html.Div('Expected Annual Spillover after FY2019', style={'margin': '5px'}),
-                dcc.Input(
-                    id=f'future-annual-so',
-                    type='number',
-                    value = 0,
-                    placeholder= 0,
-                    step = 1, min = 0, max = 140000, style={'maxWidth': '80px'}
-                )
-            ]),
-            dbc.Col(dbc.Button('Estimate!', color="success", id='button-estimate-wait-time', style={'margin':'20px'}))
-        ]),
+        ], style={'margin':'0.5rem','padding':'0.5rem','border-radius':'6px','background-color':'#CCCCCC'}),
         html.Div(id='wait-time-estimation'),
         dbc.Row([
             html.H6('EB123 Green Card Demand Estimation by Country by FY'),
@@ -115,7 +117,9 @@ def get_demand_backlog_layout(app, id):
         ]),
         info_section1,
         html.H6('[140:green card] multiplication factors'),
-        multiplication_factor_layout,
+        html.Div([
+            multiplication_factor_layout
+        ], style={'margin':'0.5rem','padding':'0.5rem','border-radius':'6px','background-color':'#CCCCCC'}),
         dcc.Store(id='gc_demand_figure_content', data = {}),
         dcc.Tabs([
             dcc.Tab([
@@ -370,7 +374,7 @@ def estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict):
         green_month = 10+addtional_month
         green_yr = 2019 + int((green_month-1)/12.0)
         green_month = (green_month-1)%12+1
-        msg_list.append(f' Your final action date is likely to become current at {green_yr}/{green_month}')
+        msg_list.append(f' Your final action date is likely to become current at {green_yr}-{str(green_month).zfill(2):}')
 
         pd_yr = int(pd.split('-')[0])
         pd_mm = int(pd.split('-')[1])

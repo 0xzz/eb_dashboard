@@ -26,12 +26,14 @@
 p {
   font-size: 1.4rem;
   padding: 1rem;
+  margin-left: 2rem;
   max-width: 90%;
   border-color: #2196F3;
   border-left: 6px solid #2196F3;
   background-color: #ddffff;
-  color: #555;
+  color: #333;
   transition: 0.5s;
+  text-align: center;
 }
 
 H4 {
