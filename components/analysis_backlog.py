@@ -104,7 +104,9 @@ def get_demand_backlog_layout(app, id):
                 dbc.Col(dbc.Button('Let me Green', id='button-estimate-wait-time'))
             ])
         ], style={'margin':'0.5rem','padding':'0.5rem','border-radius':'6px','background-color':'#CCCCCC'}),
-        html.Div(id='wait-time-estimation'),
+        dcc.Loading([
+            dcc.Markdown(id='wait-time-estimation')#          html.Div(
+        ]),
         dbc.Row([
             html.H6('EB123 Green Card Demand Analysis'),
             info_button1
@@ -118,7 +120,9 @@ def get_demand_backlog_layout(app, id):
         dcc.Tabs([
             dcc.Tab([
                 get_toggle('gc_demand_stack_toggle', False),
-                gc_demand_figure_layout
+                dcc.Loading([
+                    gc_demand_figure_layout
+                ])
             ],label="View Trend"),
             dcc.Tab(id='gc_demand_table_layout', label="View Table")
         ]),
@@ -127,7 +131,9 @@ def get_demand_backlog_layout(app, id):
             info_button2
         ], className='Section-Title'),
         info_section2,
-        dcc.Tabs(id='gc_backlogs_tabs'),
+        dcc.Loading([
+            dcc.Tabs(id='gc_backlogs_tabs'),
+        ]),
         dcc.Store(id='gc_backlogs_data', data = {})
     ])
 
@@ -265,8 +271,8 @@ def get_backlog_fig(df485, df_visa, df485_backlog, multiplication_factor):
         df485_backlog[f'{c}-EB23-backlog'] = df485_backlog[f'{c}-EB2-backlog'] +df485_backlog[f'{c}-EB3-backlog']
     
     backlog_dict = {}
-    for eb in [1,23]:
-        for c in ['China','India','Row']:
+    for c in ['China','India','Row']:
+        for eb in [1,23]:
             col = f'{c}-EB{eb}'
 
             x_backlog, y_backlog, textdata_backlog = get_interp_backlog(x_for_backlog, df485_backlog[f'{col}-backlog'].values)
@@ -384,7 +390,7 @@ def estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict):
     except:
         msg = 'Incorrect Input'
 
-    return dcc.Markdown(msg)
+    return msg
 
 
 def get_historical_clear(bl, pd, df_visa, eb_type):

@@ -105,28 +105,33 @@ def set_app_callbacks(app, app_name):
                 factors[f'{c}-EB{eb}'] = arg[ind]
                 ind+=1
         demand_fig_content, demand_table, backlogs_tabs, backlog_dict = update_backlog_components(factors)
-        # with open('backlog.json','w') as f:
-        #     json.dump(backlog_dict, f)
-
         return demand_fig_content, demand_table, backlogs_tabs, backlog_dict
 
     @app.callback(
-        [Output('pd-picker','min_date_allowed'),
-        Output('designed-annual-supply-info-div','children'),
-        Output('designed-annual-supply','children'),
-        Output('multifactor_placeholder','children')],
-        [Input('user-eb-type','value')],
-        [State(f'factor_{c}-{eb}', 'value') \
+        Output('multifactor_placeholder','children'),
+        [Input('user-eb-type','value')] + [Input(f'factor_{c}-{eb}', 'value') \
             for c in ['China', 'India', 'Row'] \
             for eb in [1,2,3]]
     )
-    def update_pd_related_defaults(eb_type, *args):
+    def update_mf_factor_for_vb_prediction(eb_type, *args):
         ci = ['China','India','Row'].index(eb_type.split('-')[0])
         eb = eb_type.split('-')[1][2:]
         if (eb=='1'):
             mf_msg = args[ci*3+0]
         else:
             mf_msg = f'{args[ci*3+1]} (EB2), {args[ci*3+2]} (EB3)'
+        return mf_msg
+
+    @app.callback(
+        [Output('pd-picker','min_date_allowed'),
+        Output('designed-annual-supply-info-div','children'),
+        Output('designed-annual-supply','children')],
+        [Input('user-eb-type','value')],
+        [State(f'factor_{c}-{eb}', 'value') \
+            for c in ['China', 'India', 'Row'] \
+            for eb in [1,2,3]]
+    )
+    def update_pd_related_defaults(eb_type, *args):
 
         info_msg = f'Annual Supply for {eb_type} after FY2019'
         min_pd_date = datetime.datetime(2017,6,2)
@@ -146,21 +151,37 @@ def set_app_callbacks(app, app_name):
             min_pd_date = datetime.datetime(2017,1,1)
             annual_supply = 64000
 
-        return min_pd_date, info_msg, annual_supply, mf_msg
+        return min_pd_date, info_msg, annual_supply
 
     @app.callback(
         Output('wait-time-estimation','children'),
         [Input('button-estimate-wait-time','n_clicks'),
          Input('gc_backlogs_data', 'data')],
         [State('user-eb-type','value'),
+        State('multifactor_placeholder','children'),
         State('pd-picker','date'),
         State('designed-annual-supply','children'),
         State('future-annual-so','value')]
     )
-    def call_estimate_wait_time(n_clicks, backlog_dict, eb_type, pd, future_supply, future_so):
+    def call_estimate_wait_time(n_clicks, backlog_dict, eb_type, mf_msg, pd, future_supply, future_so):
         if(pd):
             pd = pd.split(' ')[0]
-            return estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict)
+            pred_results = estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict)
+            if(n_clicks):
+                user_ip = flask.request.remote_addr
+                new_prediction_record = {
+                    'timestamp': datetime.datetime.now().__str__(), 
+                    'ip': user_ip,
+                    'pd': pd,
+                    'eb_type': eb_type,
+                    'multiFactor': mf_msg,
+                    'future_supply': future_supply,
+                    'future_so':future_so,
+                    'results': pred_results
+                }
+                print(new_prediction_record)
+                res = requests.post('https://eb-stats.firebaseio.com/prediction_record.json', data = json.dumps(new_prediction_record))
+            return pred_results
         else:
             return ''
 
@@ -171,11 +192,15 @@ def set_app_callbacks(app, app_name):
     def upload_access_count(c):
         res = requests.get('https://eb-stats.firebaseio.com/count.json')
         count_record = res.json()
-        print(count_record)
         count_record['count'] += 1
-        print(count_record)
         res = requests.put('https://eb-stats.firebaseio.com/count.json', data = json.dumps(count_record))
-        print(res)
+        
+        user_ip = flask.request.remote_addr
+        if user_ip!='127.0.0.1':
+            new_access_record = {'timestamp': datetime.datetime.now().__str__(), 'ip': user_ip}
+            res = requests.post('https://eb-stats.firebaseio.com/access_record.json', data = json.dumps(new_access_record))
+            print(new_access_record)
+            
         return count_record['count']
 
 def is_button_clicked(ind, time_stamp_list):
