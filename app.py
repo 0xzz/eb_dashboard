@@ -23,6 +23,7 @@ app = dash.Dash(app_name,
                   dbc.themes.BOOTSTRAP] + external_stylesheets,
                 meta_tags = meta_tags,
                )
+
 app.title = app_name
 
 server = app.server

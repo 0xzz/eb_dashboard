@@ -23,15 +23,52 @@
   color: #333;
 }
 
+.navbar-item {
+  margin: 0.75rem;
+  color:white !important;
+  font-weight: 0;
+  letter-spacing: 0;
+  text-decoration-line: none;
+}
+.navbar-item:hover {
+  font-weight: bold;
+  letter-spacing: 0;
+  color: #e0a26c !important;
+  border: 1px solid #e0a26c;
+}
+
+.nav-link {
+  margin: 0.75rem;
+  color:white !important;
+  letter-spacing: 0;
+  font-weight: 0;
+  letter-spacing: 0;
+  text-decoration-line: none;
+}
+.nav-link:hover {
+  font-weight: bold;
+  text-decoration-line: none;
+  color: #e0a26c !important;
+  border: 1px solid #e0a26c;
+}
+
 .contact-button {
-  margin-top: 0.8rem;
-  margin-left: 0.2rem;
+  margin-top: 0.70rem;
+  margin-left: 0.45rem;
   padding: 0.05rem;
   font-size: 1.3rem;
-  font-weight: 100;
+  font-weight: 0;
   letter-spacing: 0;
   color : white;
-  font-weight:bold;
+  font-family: sans-serif;
+  text-decoration-line: none;
+  /* font-weight:bold; */
+}
+.contact-button:hover {
+  font-weight: bold;
+  color: #e0a26c;
+  text-decoration-line: none;
+  border: 1px solid #e0a26c;
 }
 
 .div-value-info {
