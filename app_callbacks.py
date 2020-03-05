@@ -19,7 +19,7 @@ import dash_html_components as html
 
 from components.analysis_backlog import update_backlog_components, estimate_wait_time
 
-def set_app_callbacks(app, app_name):
+def set_app_callbacks(app, db_url):
 
     app.clientside_callback(
         ClientsideFunction(
@@ -179,13 +179,12 @@ def set_app_callbacks(app, app_name):
                     'future_so':future_so,
                     'results': pred_results
                 }
-                print(new_prediction_record)
-                res = requests.post('https://eb-stats.firebaseio.com/prediction_record.json', data = json.dumps(new_prediction_record))
+                res = requests.post(f'https://{db_url}/prediction_record.json', data = json.dumps(new_prediction_record))
 
-                res = requests.get('https://eb-stats.firebaseio.com/prediction_count.json')
+                res = requests.get(f'https://{db_url}/prediction_count.json')
                 count_record = res.json()
                 count_record['count'] += 1
-                res = requests.put('https://eb-stats.firebaseio.com/prediction_count.json', data = json.dumps(count_record))
+                res = requests.put(f'https://{db_url}/prediction_count.json', data = json.dumps(count_record))
             return pred_results
         else:
             return ''
@@ -195,15 +194,15 @@ def set_app_callbacks(app, app_name):
         [Input('dummy-page-div','children')]
     )
     def upload_access_count(c):
-        res = requests.get('https://eb-stats.firebaseio.com/count.json')
+        res = requests.get(f'https://{db_url}/count.json')
         count_record = res.json()
         count_record['count'] += 1
-        res = requests.put('https://eb-stats.firebaseio.com/count.json', data = json.dumps(count_record))
+        res = requests.put(f'https://{db_url}/count.json', data = json.dumps(count_record))
         
         user_ip = flask.request.remote_addr
         if user_ip!='127.0.0.1':
             new_access_record = {'timestamp': datetime.datetime.now().__str__(), 'ip': user_ip}
-            res = requests.post('https://eb-stats.firebaseio.com/access_record.json', data = json.dumps(new_access_record))
+            res = requests.post(f'https://{db_url}/access_record.json', data = json.dumps(new_access_record))
             print(new_access_record)
             
         return count_record['count']

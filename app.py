@@ -1,19 +1,21 @@
 
+import os
+
 import flask
+import requests
+
 import dash
-
-from layouts import get_app_layout
-
-from app_callbacks import set_app_callbacks
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 
+from layouts import get_app_layout
+from app_callbacks import set_app_callbacks
 from resources import external_scripts, external_stylesheets, meta_tags
 
-import requests
 
- 
+db_url = os.environ.get('db_url')
+
 app_name = 'EB Stats'
 
 app = dash.Dash(app_name,
@@ -27,7 +29,7 @@ server = app.server
 
 app.config.suppress_callback_exceptions = True
 
-set_app_callbacks(app, app_name)
+set_app_callbacks(app, db_url)
 
 app.layout = get_app_layout(app, app_name)
 
