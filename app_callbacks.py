@@ -19,6 +19,13 @@ import dash_html_components as html
 
 from components.analysis_backlog import update_backlog_components, estimate_wait_time
 
+def get_ip():
+    if not flask.request.headers.getlist("X-Forwarded-For"):
+        ip = flask.request.remote_addr
+    else:
+        ip = flask.request.headers.getlist("X-Forwarded-For")[0]
+    return ip
+
 def set_app_callbacks(app, db_url):
 
     app.clientside_callback(
@@ -168,7 +175,7 @@ def set_app_callbacks(app, db_url):
             pd = pd.split(' ')[0]
             pred_results = estimate_wait_time(eb_type, pd, future_supply, future_so, backlog_dict)
             if(n_clicks):
-                user_ip = flask.request.remote_addr
+                user_ip = get_ip()
                 new_prediction_record = {
                     'timestamp': datetime.datetime.now().__str__(), 
                     'ip': user_ip,
@@ -199,7 +206,7 @@ def set_app_callbacks(app, db_url):
         count_record['count'] += 1
         res = requests.put(f'https://{db_url}/count.json', data = json.dumps(count_record))
         
-        user_ip = flask.request.remote_addr
+        user_ip = get_ip()
         if user_ip!='127.0.0.1':
             new_access_record = {'timestamp': datetime.datetime.now().__str__(), 'ip': user_ip}
             res = requests.post(f'https://{db_url}/access_record.json', data = json.dumps(new_access_record))
