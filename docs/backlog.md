@@ -9,7 +9,8 @@
 ```py
 For EB1, we assume that at the end of FY2013, all backlogs before FY2013 and 40% of FY2013 demand had been satisfied for all countries. 
 
-For China EB2 & EB3, we assume that at the end of FY2019, all backlogs before 2015 has been cleared and 80% of 2015 demands have been satisfied. 
+For China EB2, we assume that at the end of FY2019, all backlogs before 2015 has been cleared and 75% of 2015 demands have been satisfied. 
+For China EB3, we assume that at the end of FY2019, all backlogs before 2016 has been cleared. 
 [At the end of FY2019, VB for China-EB2 @ June 2015 and China-EB3 @ Nov 2015 (estimated "real" value based on Oct 2019(FY2020) VB)] 
 
 For India EB2 & EB3, we assume that at the end of FY2018, all backlogs before FY2009 and 50% of 2009 demands were cleared. 
@@ -28,5 +29,5 @@ For Row EB2 & EB3, we assume that at the end of FY 2018, all backlogs before 201
 ###### 我们是如何估算backlog的？
 * 由于EB2和EB3 PERM之间可以比较容易的升降级, 历史上中国和ROW都大量存在这个情况, 在计算backlog的时候我们把EB23合并了.
 * 对于EB1, 我们假设在2013财年结束的时候，2013财年以前所有的demand均已被满足，并且2013财年自己产生的demand也已经有40%被满足. 这个假设是基于2013财年的时候全部国家都已经c了很长时间，并且前两年还存在无卡可发的情况.
-* 对于中国EB23, 我们假设在2019财年结束的时候, 2015财年之前以及2015财年80%的EB23 demand已经被满足. 这是因为在19财年结束的时候中国EB2和EB3的排期分别为2015年6月和11月（根据20财年开年数据估算得到的“真实”排期）. 
+* 对于中国EB2, 我们假设在2019财年结束的时候, 2015财年之前以及2015财年75%的EB2 demand已经被满足. 对于中国EB3, 我们假设在2019财年结束的时候, 2016财年之前的EB3 demand已经被满足. 这是因为在19财年结束的时候中国EB2和EB3的排期分别约为2015年6月和11月（根据20财年开年数据估算得到的“真实”排期）. 
 * 针对2020财年开始的情况，我们对backlog做了线性外插值.
