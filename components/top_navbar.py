@@ -36,7 +36,7 @@ def get_navbar(app_name):
                     dbc.ModalHeader("Contact US"),
                     dbc.ModalBody([
                         html.Div("This dashboard is created and maintained by volunteers & members of niunational.org."),
-                        html.Div([html.Div("For comments & question, "), html.A("send us an email!", href="mailto: xiang.zhai@niunational.org")]),
+                        html.Div([html.Div("Leave us a comment and/or question, please click ", style={'display':'inline-block'}), html.A(" here.", href="http://www.niunational.org/2020/03/employment-base-eb123.html", target="_blank")]),
                         html.A("Donate to us", href="http://www.niunational.org/p/donation.html", target="_blank")
                     ]),
                     dbc.ModalFooter(
