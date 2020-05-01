@@ -20,7 +20,7 @@ def get_table(df):
             style_as_list_view=True,
             style_table={'overflowX':'scroll'},
             style_header={
-                'backgroundColor': '#6c7ae0',
+                'backgroundColor': '#379683',
                 'fontWeight': 'bold',
                 'font-size': '1.2rem',
                 'color': 'white',
@@ -28,7 +28,7 @@ def get_table(df):
             },
             style_data_conditional=[{
                 'if': {'column_id': 'FY'},
-                #'backgroundColor': '#6c7ae0',
+                #'backgroundColor': '#379683',
                 'fontWeight': 'bold',
                 #'color': 'white',
             },

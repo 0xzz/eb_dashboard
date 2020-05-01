@@ -17,7 +17,7 @@ def get_final_action_dates_figures(app, id, *argv):
                     'data': [{'x': df['date'], 'y': df[col], 'name':col, 'mode':'lines+markers','hoverinfo':"x+y"} for col in df.columns if col!='date'],
                     'layout': {
                         'title': f'Eb-{i+1} Final Action Dates',
-                        'xaxis': {'range':[datetime.datetime(2013,10,1),datetime.datetime(2020,5,1)]},
+                        'xaxis': {'range':[datetime.datetime(2013,10,1),datetime.datetime(2020,6,1)]},
                         'margin':{'l':35, 'r':25,'b':30},
                         'legend':{'x':.05, 'y':.95,
                                   'bgcolor':"#DDDDDD",
@@ -35,7 +35,7 @@ def get_final_action_dates_figures(app, id, *argv):
                     for i, df in enumerate([eb1_dates, eb2_dates, eb3_dates])],
                     'layout': {
                         'title': f'China EB Final Action Dates',
-                        'xaxis': {'range':[datetime.datetime(2013,10,1),datetime.datetime(2020,5,1)]},
+                        'xaxis': {'range':[datetime.datetime(2013,10,1),datetime.datetime(2020,6,1)]},
                         'margin':{'l':35, 'r':25,'b':30},
                         'legend':{'x':.05, 'y':.95,
                                   'bgcolor':"#DDDDDD",

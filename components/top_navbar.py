@@ -47,10 +47,10 @@ def get_navbar(app_name):
             )
 
         ],
-        brand= 'Employment-Based Immigrant Visa Stats',
+        brand= 'GreenNet: Employment-Based Immigrant Visa Stats',
         brand_style = {'fontSize':'2rem','color':'white'},
         sticky="top",
-        color="#6c7ae0",
+        color="#379683",
         # dark=True,
     )
 

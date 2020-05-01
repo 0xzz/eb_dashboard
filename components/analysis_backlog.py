@@ -16,6 +16,12 @@ from helpers import load_140_stats, load_gc_stats
 
 def get_demand_backlog_layout(app, id):
 
+    with open("docs/EO.md", "rb") as file:
+       EO_faq_md = file.read().decode('utf8')
+    info_component0 = dcc.Markdown(EO_faq_md)
+    info_button0, info_section0 = get_local_info_component(app, id+'-EO', info_component0, hidden = False)
+
+
     with open("docs/demand.md", "rb") as file:
         demand_faq_md = file.read().decode('utf8')
     info_component1 = dcc.Markdown(demand_faq_md)
@@ -49,6 +55,11 @@ def get_demand_backlog_layout(app, id):
     )
 
     return html.Div([
+        dbc.Row([
+            html.H6("COVID-19 and Trump's April Executive Order"),
+            info_button0
+        ], className='Section-Title'),
+        info_section0,
         dbc.Row([
             html.H4('EB Green Card Wait Time, Demand and Backlog Anlysis', id=id),
         ], className='Section-Title'),
