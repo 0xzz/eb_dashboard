@@ -16,7 +16,7 @@ from resources import external_scripts, external_stylesheets, meta_tags
 
 db_url = os.environ.get('db_url')
 
-app_name = 'EB Stats'
+app_name = 'GreenNet'
 
 app = dash.Dash(app_name,
 		            external_scripts = [

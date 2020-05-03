@@ -13,15 +13,15 @@ def load_140_485_by_FY():
 
 def load_vb_dates():
 
-    # df_eb1 = pd.read_csv('./data/eb1_final_action_days.csv')
-    # df_eb2 = pd.read_csv('./data/eb2_final_action_days.csv')
-    # df_eb3 = pd.read_csv('./data/eb3_final_action_days.csv')
-    with open('./data/eb1_fa.pk','rb') as f:
-        df_eb1 = pickle.load(f)
-    with open('./data/eb2_fa.pk','rb') as f:
-        df_eb2 = pickle.load(f)
-    with open('./data/eb3_fa.pk','rb') as f:
-        df_eb3 = pickle.load(f)
+    df_eb1 = pd.read_csv('./data/eb1_final_action_days.csv')
+    df_eb2 = pd.read_csv('./data/eb2_final_action_days.csv')
+    df_eb3 = pd.read_csv('./data/eb3_final_action_days.csv')
+    # with open('./data/eb1_fa.pk','rb') as f:
+    #     df_eb1 = pickle.load(f)
+    # with open('./data/eb2_fa.pk','rb') as f:
+    #     df_eb2 = pickle.load(f)
+    # with open('./data/eb3_fa.pk','rb') as f:
+    #     df_eb3 = pickle.load(f)
 
     # df = pd.merge(pd.merge(df_eb1, df_eb2, on='date'), df_eb3, on='date')
     return df_eb1, df_eb2, df_eb3#, df
