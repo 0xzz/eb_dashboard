@@ -1,25 +1,26 @@
-###### How Backlog Analysis will help you?
-* Please note that the backlog here referes to the green card demands (regardless on if the petitioner has submitted 485 or not) that already have a PD. If a person already has an approved 140, we asume he/she brings or will bring _1*multiplication factor_ number of green card demands.
-* The backlog analysis will help you understand how many people are in front of you in the long waiting queue. Based on simple computation, you can esitmate how long you would need to wait to get a green card.
+###### How might backlog analysis help you?
+* The backlog analysis helps you better understand your place in the green card backlog queue, i.e. how many people are in front of you. This enables you to better estimate how long you would need to wait to get a green card.
+* Please note that the backlog here refers to the cumulative number of prospective green card beneficiaries. Colloquially we also refer to this as the *green card demand*. This demand is irrespective of whether the petitioner has submitted 485 or not. If a person has been granted I-140 approval, we assume he/she will bring _1*multiplication factor_ number of green card demands.
+* The aforementioned multiplication factor is a holistic fudge factor to account for green cards requested for dependents, duplicated filing because of job change, ineligibility due to permanent job loss etc.
 
-###### How did we estimate the backlogs? 
+###### How do we estimate the backlog? 
 * Because EB2 and EB3 PERM can relatively easily downgrade/upgrade, we have combined the backlog of EB2 and EB3 when plotting. 
-* The green card demands are estimated based on the 140-GreeCard multiplication factors typed in the above 3x3 input grid.
+* The green card demands are estimated based on the 140-GreenCard multiplication factor as provided in the 3x3 input grid above.
 * The backlogs are estimated based on a simple demand-supply model plus an initial offset. The initial offset are estimated using historical visa bulletins.
-```py
+```markdown
 For EB1, we assume that at the end of FY2013, all backlogs before FY2013 and 40% of FY2013 demand had been satisfied for all countries. 
 
-For China EB2, we assume that at the end of FY2019, all backlogs before 2015 has been cleared and 75% of 2015 demands have been satisfied. 
-For China EB3, we assume that at the end of FY2019, all backlogs before 2016 has been cleared. 
+For China EB2, we assume that at the end of FY2019, all backlogs before 2015 had been cleared and 75% of 2015 demands had been satisfied. 
+For China EB3, we assume that at the end of FY2019, all backlogs before 2016 had been cleared. 
 [At the end of FY2019, VB for China-EB2 @ June 2015 and China-EB3 @ Nov 2015 (estimated "real" value based on Oct 2019(FY2020) VB)] 
 
-For India EB2 & EB3, we assume that at the end of FY2018, all backlogs before FY2009 and 50% of 2009 demands were cleared. 
+For India EB2 & EB3, we assume that at the end of FY2018, all backlogs before FY2009 and 50% of 2009 demands had been cleared. 
 [At the end of FY2019, VB for Inida EB2 @ Mar 2009 and India-EB3 @ Jan 2009 respectively]
 
-For Row EB2 & EB3, we assume that at the end of FY 2018, all backlogs before 2017 and 75% of 2017 demands had been satisfied. 
+For Rest-of-the-World (ROW) EB2 & EB3, we assume that at the end of FY 2018, all backlogs before 2017 and 75% of 2017 demands had been satisfied. 
 [VB for ROW EB2/3 were current at that time]
 ```
-* We linearly extrapolate the backlog beyond 10/2019 assuming the same slope as last year. 
+* We linearly extrapolate the backlogs beyond 10/2019 assuming the same slope as the last year. 
 
 
 
